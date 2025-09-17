@@ -1,0 +1,877 @@
+/* CSS Variables for theming */
+:root {
+  --bg-primary: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-input: rgba(255, 255, 255, 0.9);
+  --text-primary: #1a1a1a;
+  --text-secondary: #6c757d;
+  --text-muted: #495057;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.1);
+
+  /* Fretboard colors - clean and simple */
+  --fret-line: rgba(0, 0, 0, 0.15);
+  --string-line: rgba(0, 0, 0, 0.1);
+  --fretboard-bg: #fafafa;
+  --fret-space: #ffffff;
+}
+
+[data-theme="dark"] {
+  --bg-primary: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-input: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #b0b0b0;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.4);
+
+  /* Dark mode fretboard */
+  --fret-line: rgba(255, 255, 255, 0.15);
+  --string-line: rgba(255, 255, 255, 0.1);
+  --fretboard-bg: #1a1a1a;
+  --fret-space: #222222;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  transition: all 0.5s ease;
+}
+
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+}
+
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 12px 20px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+/* Header */
+.header {
+  margin-bottom: 56px;
+  text-align: center;
+  padding: 40px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--text-primary) 0%, #4a90a4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 400;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  box-shadow: var(--shadow-light);
+}
+
+.tab-button {
+  flex: 1;
+  max-width: 250px;
+  padding: 16px 32px;
+  background: transparent;
+  border: none;
+  border-radius: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-button.active {
+  background: linear-gradient(
+    135deg,
+    rgba(74, 144, 164, 0.9) 0%,
+    rgba(74, 144, 164, 0.7) 100%
+  );
+  color: white;
+  box-shadow: 0 4px 16px rgba(74, 144, 164, 0.3);
+}
+
+.tab-button:hover:not(.active) {
+  background: rgba(74, 144, 164, 0.1);
+  color: var(--text-primary);
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Volume Controls */
+.volume-controls {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+}
+
+.volume-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 120px;
+}
+
+.volume-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.volume-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Controls */
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 56px;
+}
+
+.control-group {
+  padding: 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: block;
+}
+
+.select {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  backdrop-filter: blur(10px);
+}
+
+.slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  outline: none;
+  appearance: none;
+  background: linear-gradient(90deg, #4a90a4 0%, rgba(74, 144, 164, 0.3) 100%);
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4a90a4;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(74, 144, 164, 0.3);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4a90a4;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(74, 144, 164, 0.3);
+}
+
+/* Buttons */
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 56px;
+  flex-wrap: wrap;
+}
+
+.button,
+.button-secondary,
+.button-tertiary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  padding: 20px 40px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 160px;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.button {
+  background: linear-gradient(
+    135deg,
+    rgba(74, 144, 164, 0.9) 0%,
+    rgba(74, 144, 164, 0.7) 100%
+  );
+  box-shadow: 0 8px 32px rgba(74, 144, 164, 0.3);
+}
+
+.button-secondary {
+  background: linear-gradient(
+    135deg,
+    rgba(244, 162, 97, 0.9) 0%,
+    rgba(244, 162, 97, 0.7) 100%
+  );
+  box-shadow: 0 8px 32px rgba(244, 162, 97, 0.3);
+}
+
+.button-tertiary {
+  background: linear-gradient(
+    135deg,
+    rgba(193, 102, 107, 0.9) 0%,
+    rgba(193, 102, 107, 0.7) 100%
+  );
+  box-shadow: 0 8px 32px rgba(193, 102, 107, 0.3);
+}
+
+.button:hover,
+.button-secondary:hover,
+.button-tertiary:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Info Panel */
+.info-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  padding: 40px;
+  border-radius: 32px;
+  margin-bottom: 56px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-medium);
+}
+
+.info-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.info-text {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.info-notes {
+  font-size: 14px;
+}
+
+.info-label {
+  font-weight: 500;
+}
+
+.scale-notes {
+  color: #4a90a4;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Audio Status */
+.audio-status {
+  text-align: center;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.audio-status.error {
+  background: rgba(193, 102, 107, 0.1);
+  color: #c1666b;
+  border-color: rgba(193, 102, 107, 0.3);
+}
+
+.audio-status.success {
+  background: rgba(74, 144, 164, 0.1);
+  color: #4a90a4;
+  border-color: rgba(74, 144, 164, 0.3);
+}
+
+/* Fretboard - Clean and Simple */
+.fretboard {
+  background: var(--fretboard-bg);
+  border: 2px solid var(--fret-line);
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 56px;
+  box-shadow: var(--shadow-light);
+}
+
+.fretboard-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.fretboard-container {
+  overflow-x: auto;
+  padding: 16px 0;
+  width: 100%;
+}
+
+/* Fret Numbers - Responsive */
+.fret-numbers {
+  display: flex;
+  margin-bottom: 16px;
+  min-width: fit-content;
+  width: 100%;
+}
+
+.fret-number {
+  flex: 1;
+  min-width: 50px;
+  max-width: 80px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 4px 0;
+}
+
+/* Strings Container */
+.strings {
+  position: relative;
+}
+
+.string {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  position: relative;
+  height: 40px;
+  min-width: fit-content;
+  width: 100%;
+}
+
+/* String Line */
+.string::after {
+  content: "";
+  position: absolute;
+  left: 50px;
+  right: 0;
+  height: 1px;
+  background: var(--string-line);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.string-name {
+  width: 50px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Fret Spaces - Between fret lines where fingers go - Responsive */
+.fret-space {
+  flex: 1;
+  min-width: 50px;
+  max-width: 80px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  position: relative;
+  background: var(--fret-space);
+  border-right: 1px solid var(--fret-line);
+  z-index: 2;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* First fret space (nut) */
+.fret-space:first-of-type {
+  border-left: 2px solid var(--fret-line);
+}
+
+/* Fret markers */
+.fret-space.has-marker::before {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* Note States */
+.fret-space.note-root {
+  background: #c1666b;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  margin: 2px;
+  width: calc(100% - 4px);
+  height: 36px;
+  box-shadow: 0 2px 8px rgba(193, 102, 107, 0.4);
+}
+
+.fret-space.note-pattern {
+  background: #4a90a4;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  margin: 2px;
+  width: calc(100% - 4px);
+  height: 36px;
+  box-shadow: 0 2px 6px rgba(74, 144, 164, 0.4);
+}
+
+.fret-space.note-open {
+  background: #4a90a4;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  margin: 5px;
+  width: calc(100% - 10px);
+  height: 30px;
+  box-shadow: 0 2px 8px rgba(74, 144, 164, 0.4);
+}
+
+.fret-space.note-scale {
+  background: rgba(74, 144, 164, 0.2);
+  color: var(--text-primary);
+  border-radius: 4px;
+  margin: 4px;
+  width: calc(100% - 8px);
+  height: 32px;
+}
+
+.fret-space.note-playing {
+  background: #f4a261;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  margin: 1px;
+  width: calc(100% - 2px);
+  height: 38px;
+  box-shadow: 0 0 16px rgba(244, 162, 97, 0.6);
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.fret-space:hover {
+  transform: scale(1.1);
+  z-index: 5;
+}
+
+/* Responsive sizing for larger screens */
+@media (min-width: 1200px) {
+  .fret-space,
+  .fret-number {
+    width: 70px;
+    min-width: 70px;
+  }
+}
+
+/* Legend */
+.legend {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  font-size: 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.legend-root {
+  background: #c1666b;
+}
+.legend-pattern {
+  background: #4a90a4;
+}
+.legend-open {
+  background: #4a90a4;
+  border-radius: 50%;
+}
+.legend-scale {
+  background: rgba(74, 144, 164, 0.2);
+}
+.legend-playing {
+  background: #f4a261;
+}
+
+/* Chord Chart Styles */
+.chord-search {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 16px 24px;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.chord-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 32px;
+  margin-bottom: 56px;
+}
+
+.chord-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.chord-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+.chord-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.chord-diagram {
+  width: 140px;
+  height: 180px;
+  margin: 0 auto 16px;
+  position: relative;
+  background: var(--fretboard-bg);
+  border: 2px solid var(--fret-line);
+  border-radius: 8px;
+}
+
+.chord-frets {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+}
+
+.chord-fret-line {
+  width: 100%;
+  height: 1px;
+  background: var(--fret-line);
+  position: absolute;
+}
+
+.chord-string-line {
+  height: 100%;
+  width: 1px;
+  background: var(--string-line);
+  position: absolute;
+}
+
+.chord-finger {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #4a90a4;
+  border-radius: 50%;
+  border: 2px solid white;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, -50%);
+}
+
+.chord-finger.root {
+  background: #c1666b;
+}
+
+.chord-open,
+.chord-mute {
+  position: absolute;
+  top: -20px;
+  font-size: 16px;
+  font-weight: bold;
+  transform: translateX(-50%);
+}
+
+.chord-open {
+  color: #4a90a4;
+}
+
+.chord-mute {
+  color: #c1666b;
+}
+
+.chord-fingering {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.chord-variant {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.play-chord-btn {
+  background: linear-gradient(
+    135deg,
+    rgba(74, 144, 164, 0.9) 0%,
+    rgba(74, 144, 164, 0.7) 100%
+  );
+  border: none;
+  border-radius: 16px;
+  padding: 8px 16px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.play-chord-btn:hover {
+  transform: translateY(-1px);
+}
+
+.play-chord-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Tips */
+.tips {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  padding: 48px;
+  border-radius: 32px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-medium);
+}
+
+.tips-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+.tips-section {
+  padding: 24px;
+  background: rgba(248, 249, 250, 0.5);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+}
+
+/* Fix dark mode tips background */
+[data-theme="dark"] .tips-section {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tips-section-title {
+  font-weight: 700;
+  color: #4a90a4;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.tips-list {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #app {
+    padding: 16px;
+  }
+
+  .fret-space,
+  .fret-number {
+    min-width: 40px;
+    flex: 1;
+  }
+
+  .title {
+    font-size: 36px;
+  }
+
+  .chord-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+  }
+
+  .tab-button {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .volume-controls {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}

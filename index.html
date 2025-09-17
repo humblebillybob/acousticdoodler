@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guitar Scales & Chords Interactive Tool</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-theme="dark">
+    <div id="app">
+      <button id="themeToggle" class="theme-toggle">
+        <span id="themeIcon">☀️</span> <span id="themeText">Light</span>
+      </button>
+
+      <div class="header">
+        <h1 class="title">Guitar Scales & Chords</h1>
+        <p class="subtitle">
+          Interactive fretboard patterns, chord charts, and audio playback
+        </p>
+      </div>
+
+      <!-- Audio Status -->
+      <div id="audioStatus" class="audio-status">
+        Click "Initialize Audio" to enable sound playback
+      </div>
+
+      <!-- Volume Controls -->
+      <div class="volume-controls">
+        <button id="initAudioBtn" class="button">🔊 Initialize Audio</button>
+        <div class="volume-group">
+          <div class="volume-label">Master Volume</div>
+          <input
+            type="range"
+            id="masterVolumeSlider"
+            class="slider"
+            min="0"
+            max="100"
+            value="50"
+          />
+          <div class="volume-value" id="masterVolumeValue">50%</div>
+        </div>
+        <div class="volume-group">
+          <div class="volume-label">Note Duration</div>
+          <input
+            type="range"
+            id="noteDurationSlider"
+            class="slider"
+            min="100"
+            max="2000"
+            value="500"
+          />
+          <div class="volume-value" id="noteDurationValue">0.5s</div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-button active" data-tab="scales">Scales</button>
+        <button class="tab-button" data-tab="chords">Chord Chart</button>
+      </div>
+
+      <!-- Scales Tab Content -->
+      <div id="scales-tab" class="tab-content active">
+        <div class="controls-grid">
+          <div class="control-group">
+            <label class="label">Scale Type</label>
+            <select id="scaleSelect" class="select">
+              <option value="major">Major</option>
+              <option value="minor">Natural Minor</option>
+              <option value="pentatonicMajor">Pentatonic Major</option>
+              <option value="pentatonicMinor">Pentatonic Minor</option>
+              <option value="blues">Blues</option>
+              <option value="dorian">Dorian</option>
+              <option value="mixolydian">Mixolydian</option>
+              <option value="lydian">Lydian</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="label">Key</label>
+            <select id="keySelect" class="select">
+              <option value="C">C</option>
+              <option value="C#">C#</option>
+              <option value="D">D</option>
+              <option value="D#">D#</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="F#">F#</option>
+              <option value="G">G</option>
+              <option value="G#">G#</option>
+              <option value="A">A</option>
+              <option value="A#">A#</option>
+              <option value="B">B</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="label">Pattern</label>
+            <select id="patternSelect" class="select">
+              <option value="0">Pattern 1 (Root)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="label"
+              >Tempo: <span id="tempoValue">120</span> BPM</label
+            >
+            <input
+              type="range"
+              id="tempoSlider"
+              min="60"
+              max="300"
+              value="120"
+              class="slider"
+            />
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button id="playButton" class="button" disabled>
+            <span id="playIcon">▶️</span>
+            <span id="playText">Play Pattern</span>
+          </button>
+
+          <button id="playFullNeckBtn" class="button-tertiary">
+            <span id="fullNeckIcon">🎸</span>
+            <span id="fullNeckText">Full Neck Scale</span>
+          </button>
+
+          <button id="infoButton" class="button-secondary">
+            ⚬ Scale Info <span id="infoIcon">⌄</span>
+          </button>
+        </div>
+
+        <div id="infoPanel" class="info-panel hidden">
+          <h3 id="infoTitle" class="info-title">C Major Scale</h3>
+          <p id="infoText" class="info-text"></p>
+          <div class="info-notes">
+            <span class="info-label">Scale notes: </span>
+            <span id="scaleNotes" class="scale-notes"
+              >C - D - E - F - G - A - B</span
+            >
+          </div>
+        </div>
+
+        <div class="fretboard">
+          <h2 id="fretboardTitle" class="fretboard-title">
+            Fretboard - Pattern 1 (Root)
+          </h2>
+
+          <div class="fretboard-container">
+            <!-- Fret numbers -->
+            <div class="fret-numbers">
+              <div class="fret-number"></div>
+              <div class="fret-number">0</div>
+              <div class="fret-number">1</div>
+              <div class="fret-number">2</div>
+              <div class="fret-number">3</div>
+              <div class="fret-number">4</div>
+              <div class="fret-number">5</div>
+              <div class="fret-number">6</div>
+              <div class="fret-number">7</div>
+              <div class="fret-number">8</div>
+              <div class="fret-number">9</div>
+              <div class="fret-number">10</div>
+              <div class="fret-number">11</div>
+              <div class="fret-number">12</div>
+            </div>
+
+            <!-- Strings and frets -->
+            <div id="strings" class="strings">
+              <!-- Strings will be generated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-color legend-root"></div>
+              <span>Root Note (<span id="legendRoot">C</span>)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color legend-pattern"></div>
+              <span>Pattern Notes</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color legend-open"></div>
+              <span>Open Strings</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color legend-scale"></div>
+              <span>Other Scale Notes</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color legend-playing"></div>
+              <span>Currently Playing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chords Tab Content -->
+      <div id="chords-tab" class="tab-content">
+        <div class="chord-search">
+          <input
+            type="text"
+            id="chordSearchInput"
+            class="search-input"
+            placeholder="Search chords (e.g., C, Am, F7, Bm)..."
+          />
+        </div>
+
+        <div id="chordGrid" class="chord-grid">
+          <!-- Chord cards will be generated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="tips">
+        <h2 class="tips-title">Practice Tips</h2>
+        <div class="tips-grid">
+          <div class="tips-section">
+            <h3 class="tips-section-title">Getting Started</h3>
+            <div class="tips-list">
+              • Start with Pattern 1 and learn it thoroughly<br />
+              • Practice slowly with a metronome<br />
+              • Focus on clean fretting and picking<br />
+              • Memorize the root note positions
+            </div>
+          </div>
+          <div class="tips-section">
+            <h3 class="tips-section-title">Using This Tool</h3>
+            <div class="tips-list">
+              • Click "Initialize Audio" first to enable sound<br />
+              • Click any note on the fretboard to hear it<br />
+              • Try "Full Neck Scale" for complete fretboard practice<br />
+              • Use the chord chart for rhythm practice
+            </div>
+          </div>
+          <div class="tips-section">
+            <h3 class="tips-section-title">Chord Practice</h3>
+            <div class="tips-list">
+              • Start with basic open chords: C, G, D, Em, Am<br />
+              • Practice chord changes slowly first<br />
+              • Use a metronome for consistent timing<br />
+              • Keep your fretting hand relaxed
+            </div>
+          </div>
+          <div class="tips-section">
+            <h3 class="tips-section-title">Scale Practice</h3>
+            <div class="tips-list">
+              • Learn patterns in different positions<br />
+              • Practice ascending and descending<br />
+              • Connect patterns across the fretboard<br />
+              • Improvise over backing tracks
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
