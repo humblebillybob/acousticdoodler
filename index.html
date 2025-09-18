@@ -6,10 +6,10 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <title>AcousticDoodler - Scales & Chords</title>
+    <title>AcousticDoodler - Multi-Instrument Scales & Chords</title>
     <meta
       name="description"
-      content="Interactive guitar scales, chord charts, and fretboard tool with audio playback"
+      content="Interactive guitar, ukulele, and mandolin scales, chord charts, and fretboard tool with audio playback"
     />
 
     <!-- PWA and iOS Web App Meta Tags -->
@@ -33,6 +33,7 @@
     <!-- Manifest for PWA -->
     <link rel="manifest" href="manifest.json" />
 
+    <!-- External Stylesheet -->
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-theme="dark">
@@ -41,11 +42,23 @@
         <span id="themeIcon">☀️</span> <span id="themeText">Light</span>
       </button>
 
+      <!-- Instrument Navigation -->
+      <div class="instrument-nav">
+        <button class="instrument-button active" data-instrument="guitar">
+          🎸 Guitar
+        </button>
+        <button class="instrument-button" data-instrument="ukulele">
+          🎵 Ukulele
+        </button>
+        <button class="instrument-button" data-instrument="mandolin">
+          🪕 Mandolin
+        </button>
+      </div>
+
       <div class="header">
         <h1 class="title">AcousticDoodler</h1>
+        <div class="instrument-title" id="instrumentTitle">Guitar</div>
         <p class="subtitle">
-          <b>FOR GUITAR</b>
-          <br />
           Interactive fretboard patterns, chord charts, and audio playback
         </p>
       </div>
@@ -248,7 +261,7 @@
 
       <div class="tips">
         <h2 class="tips-title">Practice Tips</h2>
-        <div class="tips-grid">
+        <div class="tips-grid" id="tipsGrid">
           <div class="tips-section">
             <h3 class="tips-section-title">Getting Started</h3>
             <div class="tips-list">
@@ -263,7 +276,7 @@
             <div class="tips-list">
               • Click "Initialize Audio" first to enable sound<br />
               • Click any note on the fretboard to hear it<br />
-              • Try "Full Neck Scale" for complete fretboard practice<br />
+              • Try "Full Neck Scale" for complete practice<br />
               • Use the chord chart for rhythm practice
             </div>
           </div>
@@ -289,6 +302,7 @@
       </div>
     </div>
 
+    <!-- External JavaScript -->
     <script src="script.js"></script>
   </body>
 </html>
