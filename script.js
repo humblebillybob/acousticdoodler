@@ -91,6 +91,13 @@ class MultiInstrumentApp {
     this.masterVolume = 0.5;
     this.noteDuration = 0.5;
 
+    // Tuner properties
+    this.tunerActive = false;
+    this.microphone = null;
+    this.analyser = null;
+    this.tunerAnimationFrame = null;
+    this.tunerAudioContext = null;
+
     // Note names
     this.noteNames = [
       "C",
@@ -180,28 +187,6 @@ class MultiInstrumentApp {
                 [4, 7],
               ],
             },
-            {
-              name: "Pattern 4",
-              frets: [
-                [7, 9],
-                [7, 9],
-                [6, 9],
-                [6, 8],
-                [7, 10],
-                [7, 9],
-              ],
-            },
-            {
-              name: "Pattern 5",
-              frets: [
-                [9, 12],
-                [9, 12],
-                [9, 11],
-                [8, 11],
-                [10, 12],
-                [9, 12],
-              ],
-            },
           ],
           pentatonicMinor: [
             {
@@ -226,39 +211,6 @@ class MultiInstrumentApp {
                 [3, 5],
               ],
             },
-            {
-              name: "Box 3",
-              frets: [
-                [5, 8],
-                [5, 7],
-                [4, 7],
-                [4, 7],
-                [5, 8],
-                [5, 8],
-              ],
-            },
-            {
-              name: "Box 4",
-              frets: [
-                [8, 10],
-                [7, 10],
-                [7, 9],
-                [7, 9],
-                [8, 10],
-                [8, 10],
-              ],
-            },
-            {
-              name: "Box 5",
-              frets: [
-                [10, 12],
-                [10, 12],
-                [9, 12],
-                [9, 12],
-                [10, 12],
-                [10, 12],
-              ],
-            },
           ],
         },
         chords: {
@@ -270,33 +222,12 @@ class MultiInstrumentApp {
             description: "C Major",
             variant: "Open Position",
           },
-          C_barre: {
-            name: "C",
-            fingering: "x35553",
-            fingers: [null, 1, 3, 3, 3, 1],
-            description: "C Major",
-            variant: "Barre (3rd fret)",
-          },
-          C_alt: {
-            name: "C",
-            fingering: "x32013",
-            fingers: [null, 3, 2, null, 1, 4],
-            description: "C Major",
-            variant: "Alternative",
-          },
           D: {
             name: "D",
             fingering: "xx0232",
             fingers: [null, null, null, 1, 3, 2],
             description: "D Major",
             variant: "Open Position",
-          },
-          D_barre: {
-            name: "D",
-            fingering: "x57775",
-            fingers: [null, 1, 3, 3, 3, 1],
-            description: "D Major",
-            variant: "Barre (5th fret)",
           },
           E: {
             name: "E",
@@ -305,26 +236,12 @@ class MultiInstrumentApp {
             description: "E Major",
             variant: "Open Position",
           },
-          E_alt: {
-            name: "E",
-            fingering: "079997",
-            fingers: [null, 1, 3, 3, 3, 1],
-            description: "E Major",
-            variant: "Barre (7th fret)",
-          },
           F: {
             name: "F",
             fingering: "133211",
             fingers: [1, 3, 3, 2, 1, 1],
             description: "F Major",
             variant: "Barre (1st fret)",
-          },
-          F_open: {
-            name: "F",
-            fingering: "xx3211",
-            fingers: [null, null, 3, 2, 1, 1],
-            description: "F Major",
-            variant: "Partial Barre",
           },
           G: {
             name: "G",
@@ -333,20 +250,6 @@ class MultiInstrumentApp {
             description: "G Major",
             variant: "Open Position",
           },
-          G_barre: {
-            name: "G",
-            fingering: "355433",
-            fingers: [1, 3, 4, 3, 3, 3],
-            description: "G Major",
-            variant: "Barre (3rd fret)",
-          },
-          G_alt: {
-            name: "G",
-            fingering: "320033",
-            fingers: [3, 2, null, null, 3, 4],
-            description: "G Major",
-            variant: "Alternative",
-          },
           A: {
             name: "A",
             fingering: "x02220",
@@ -354,28 +257,6 @@ class MultiInstrumentApp {
             description: "A Major",
             variant: "Open Position",
           },
-          A_barre: {
-            name: "A",
-            fingering: "577655",
-            fingers: [1, 3, 3, 2, 1, 1],
-            description: "A Major",
-            variant: "Barre (5th fret)",
-          },
-          B: {
-            name: "B",
-            fingering: "x24442",
-            fingers: [null, 2, 4, 4, 4, 2],
-            description: "B Major",
-            variant: "Barre (2nd fret)",
-          },
-          Bb: {
-            name: "Bb",
-            fingering: "x13331",
-            fingers: [null, 1, 3, 3, 3, 1],
-            description: "B♭ Major",
-            variant: "Barre (1st fret)",
-          },
-
           // Minor Chords
           Am: {
             name: "Am",
@@ -384,26 +265,12 @@ class MultiInstrumentApp {
             description: "A Minor",
             variant: "Open Position",
           },
-          Am_barre: {
-            name: "Am",
-            fingering: "577555",
-            fingers: [1, 3, 3, 1, 1, 1],
-            description: "A Minor",
-            variant: "Barre (5th fret)",
-          },
           Dm: {
             name: "Dm",
             fingering: "xx0231",
             fingers: [null, null, null, 2, 3, 1],
             description: "D Minor",
             variant: "Open Position",
-          },
-          Dm_barre: {
-            name: "Dm",
-            fingering: "x57765",
-            fingers: [null, 1, 3, 4, 2, 1],
-            description: "D Minor",
-            variant: "Barre (5th fret)",
           },
           Em: {
             name: "Em",
@@ -412,376 +279,14 @@ class MultiInstrumentApp {
             description: "E Minor",
             variant: "Open Position",
           },
-          Em_barre: {
-            name: "Em",
-            fingering: "079987",
-            fingers: [null, 1, 3, 3, 2, 1],
-            description: "E Minor",
-            variant: "Barre (7th fret)",
-          },
-          Fm: {
-            name: "Fm",
-            fingering: "133111",
-            fingers: [1, 3, 3, 1, 1, 1],
-            description: "F Minor",
-            variant: "Barre (1st fret)",
-          },
-          Gm: {
-            name: "Gm",
-            fingering: "355333",
-            fingers: [1, 3, 4, 3, 3, 3],
-            description: "G Minor",
-            variant: "Barre (3rd fret)",
-          },
-          Bm: {
-            name: "Bm",
-            fingering: "x24432",
-            fingers: [null, 2, 4, 4, 3, 2],
-            description: "B Minor",
-            variant: "Barre (2nd fret)",
-          },
-          Cm: {
-            name: "Cm",
-            fingering: "x35543",
-            fingers: [null, 1, 3, 4, 2, 1],
-            description: "C Minor",
-            variant: "Barre (3rd fret)",
-          },
-
-          // 7th Chords
-          C7: {
-            name: "C7",
-            fingering: "x32310",
-            fingers: [null, 3, 2, 3, 1, null],
-            description: "C Dominant 7th",
-            variant: "Open Position",
-          },
-          C7_barre: {
-            name: "C7",
-            fingering: "x35353",
-            fingers: [null, 1, 3, 1, 4, 1],
-            description: "C Dominant 7th",
-            variant: "Barre (3rd fret)",
-          },
-          D7: {
-            name: "D7",
-            fingering: "xx0212",
-            fingers: [null, null, null, 2, 1, 2],
-            description: "D Dominant 7th",
-            variant: "Open Position",
-          },
-          E7: {
-            name: "E7",
-            fingering: "020100",
-            fingers: [null, 2, null, 1, null, null],
-            description: "E Dominant 7th",
-            variant: "Open Position",
-          },
-          F7: {
-            name: "F7",
-            fingering: "131211",
-            fingers: [1, 3, 1, 2, 1, 1],
-            description: "F Dominant 7th",
-            variant: "Barre (1st fret)",
-          },
-          G7: {
-            name: "G7",
-            fingering: "320001",
-            fingers: [3, 2, null, null, null, 1],
-            description: "G Dominant 7th",
-            variant: "Open Position",
-          },
-          A7: {
-            name: "A7",
-            fingering: "x02020",
-            fingers: [null, null, 2, null, 2, null],
-            description: "A Dominant 7th",
-            variant: "Open Position",
-          },
-          B7: {
-            name: "B7",
-            fingering: "x21202",
-            fingers: [null, 2, 1, 2, null, 2],
-            description: "B Dominant 7th",
-            variant: "Open Position",
-          },
-
-          // Minor 7th Chords
-          Am7: {
-            name: "Am7",
-            fingering: "x02010",
-            fingers: [null, null, 2, null, 1, null],
-            description: "A Minor 7th",
-            variant: "Open Position",
-          },
-          Dm7: {
-            name: "Dm7",
-            fingering: "xx0211",
-            fingers: [null, null, null, 2, 1, 1],
-            description: "D Minor 7th",
-            variant: "Open Position",
-          },
-          Em7: {
-            name: "Em7",
-            fingering: "022030",
-            fingers: [null, 2, 2, null, 3, null],
-            description: "E Minor 7th",
-            variant: "Open Position",
-          },
-          Fm7: {
-            name: "Fm7",
-            fingering: "131141",
-            fingers: [1, 3, 1, 1, 4, 1],
-            description: "F Minor 7th",
-            variant: "Barre (1st fret)",
-          },
-          Gm7: {
-            name: "Gm7",
-            fingering: "353363",
-            fingers: [1, 3, 1, 1, 4, 1],
-            description: "G Minor 7th",
-            variant: "Barre (3rd fret)",
-          },
-
-          // Major 7th Chords
-          Cmaj7: {
-            name: "Cmaj7",
-            fingering: "x32000",
-            fingers: [null, 3, 2, null, null, null],
-            description: "C Major 7th",
-            variant: "Open Position",
-          },
-          Dmaj7: {
-            name: "Dmaj7",
-            fingering: "xx0222",
-            fingers: [null, null, null, 1, 1, 1],
-            description: "D Major 7th",
-            variant: "Open Position",
-          },
-          Emaj7: {
-            name: "Emaj7",
-            fingering: "021100",
-            fingers: [null, 2, 1, 1, null, null],
-            description: "E Major 7th",
-            variant: "Open Position",
-          },
-          Fmaj7: {
-            name: "Fmaj7",
-            fingering: "xx3210",
-            fingers: [null, null, 3, 2, 1, null],
-            description: "F Major 7th",
-            variant: "Open Position",
-          },
-          Gmaj7: {
-            name: "Gmaj7",
-            fingering: "320002",
-            fingers: [3, 2, null, null, null, 2],
-            description: "G Major 7th",
-            variant: "Open Position",
-          },
-          Amaj7: {
-            name: "Amaj7",
-            fingering: "x02120",
-            fingers: [null, null, 2, 1, 2, null],
-            description: "A Major 7th",
-            variant: "Open Position",
-          },
-
-          // Sus Chords
-          Csus2: {
-            name: "Csus2",
-            fingering: "x30010",
-            fingers: [null, 3, null, null, 1, null],
-            description: "C Suspended 2nd",
-            variant: "Open Position",
-          },
-          Csus4: {
-            name: "Csus4",
-            fingering: "x33010",
-            fingers: [null, 3, 3, null, 1, null],
-            description: "C Suspended 4th",
-            variant: "Open Position",
-          },
-          Dsus2: {
-            name: "Dsus2",
-            fingering: "xx0230",
-            fingers: [null, null, null, 2, 3, null],
-            description: "D Suspended 2nd",
-            variant: "Open Position",
-          },
-          Dsus4: {
-            name: "Dsus4",
-            fingering: "xx0233",
-            fingers: [null, null, null, 2, 3, 3],
-            description: "D Suspended 4th",
-            variant: "Open Position",
-          },
-          Esus4: {
-            name: "Esus4",
-            fingering: "022200",
-            fingers: [null, 2, 2, 2, null, null],
-            description: "E Suspended 4th",
-            variant: "Open Position",
-          },
-          Fsus2: {
-            name: "Fsus2",
-            fingering: "xx3011",
-            fingers: [null, null, 3, null, 1, 1],
-            description: "F Suspended 2nd",
-            variant: "Open Position",
-          },
-          Gsus2: {
-            name: "Gsus2",
-            fingering: "300003",
-            fingers: [3, null, null, null, null, 3],
-            description: "G Suspended 2nd",
-            variant: "Open Position",
-          },
-          Gsus4: {
-            name: "Gsus4",
-            fingering: "320013",
-            fingers: [3, 2, null, null, 1, 4],
-            description: "G Suspended 4th",
-            variant: "Open Position",
-          },
-          Asus2: {
-            name: "Asus2",
-            fingering: "x02200",
-            fingers: [null, null, 2, 2, null, null],
-            description: "A Suspended 2nd",
-            variant: "Open Position",
-          },
-          Asus4: {
-            name: "Asus4",
-            fingering: "x02230",
-            fingers: [null, null, 2, 2, 3, null],
-            description: "A Suspended 4th",
-            variant: "Open Position",
-          },
-
-          // Diminished & Augmented
-          Adim: {
-            name: "Adim",
-            fingering: "x01212",
-            fingers: [null, null, 1, 2, 1, 2],
-            description: "A Diminished",
-            variant: "Open Position",
-          },
-          Bdim: {
-            name: "Bdim",
-            fingering: "x23434",
-            fingers: [null, 1, 2, 3, 4, 4],
-            description: "B Diminished",
-            variant: "2nd fret",
-          },
-          Caug: {
-            name: "Caug",
-            fingering: "x32110",
-            fingers: [null, 3, 2, 1, 1, null],
-            description: "C Augmented",
-            variant: "Open Position",
-          },
-          Gaug: {
-            name: "Gaug",
-            fingering: "321003",
-            fingers: [3, 2, 1, null, null, 4],
-            description: "G Augmented",
-            variant: "Open Position",
-          },
-
-          // Add some 9th chords
-          C9: {
-            name: "C9",
-            fingering: "x32333",
-            fingers: [null, 1, 2, 3, 3, 3],
-            description: "C Dominant 9th",
-            variant: "3rd fret",
-          },
-          D9: {
-            name: "D9",
-            fingering: "x54555",
-            fingers: [null, 1, 2, 1, 1, 1],
-            description: "D Dominant 9th",
-            variant: "5th fret",
-          },
-          E9: {
-            name: "E9",
-            fingering: "020102",
-            fingers: [null, 2, null, 1, null, 2],
-            description: "E Dominant 9th",
-            variant: "Open Position",
-          },
-          G9: {
-            name: "G9",
-            fingering: "300001",
-            fingers: [3, null, null, null, null, 1],
-            description: "G Dominant 9th",
-            variant: "Open Position",
-          },
-
-          // Minor 9th
-          Am9: {
-            name: "Am9",
-            fingering: "x02000",
-            fingers: [null, null, 2, null, null, null],
-            description: "A Minor 9th",
-            variant: "Open Position",
-          },
-          Em9: {
-            name: "Em9",
-            fingering: "022002",
-            fingers: [null, 2, 2, null, null, 2],
-            description: "E Minor 9th",
-            variant: "Open Position",
-          },
-
-          // 6th Chords
-          C6: {
-            name: "C6",
-            fingering: "x32210",
-            fingers: [null, 3, 2, 2, 1, null],
-            description: "C Major 6th",
-            variant: "Open Position",
-          },
-          D6: {
-            name: "D6",
-            fingering: "xx0202",
-            fingers: [null, null, null, 2, null, 2],
-            description: "D Major 6th",
-            variant: "Open Position",
-          },
-          F6: {
-            name: "F6",
-            fingering: "xx3231",
-            fingers: [null, null, 3, 2, 3, 1],
-            description: "F Major 6th",
-            variant: "Open Position",
-          },
-          G6: {
-            name: "G6",
-            fingering: "320000",
-            fingers: [3, 2, null, null, null, null],
-            description: "G Major 6th",
-            variant: "Open Position",
-          },
-          Am6: {
-            name: "Am6",
-            fingering: "x02212",
-            fingers: [null, null, 2, 2, 1, 2],
-            description: "A Minor 6th",
-            variant: "Open Position",
-          },
         },
         tips: [
           {
             title: "Guitar Basics",
-            content: "Start with open chords like G, C, D, Em, and Am. These form the foundation of thousands of songs."
+            content:
+              "Start with open chords like G, C, D, Em, and Am. These form the foundation of thousands of songs.",
           },
-          {
-            title: "Barre Chords",
-            content: "Once comfortable with open chords, learn F and Bm barre chords to unlock playing in all keys."
-          },
-        ]
+        ],
       },
       ukulele: {
         name: "Tenor Ukulele",
@@ -799,39 +304,12 @@ class MultiInstrumentApp {
               ],
             },
             {
-              name: "Pattern 2", 
+              name: "Pattern 2",
               frets: [
                 [2, 5],
                 [3, 5],
                 [2, 4],
                 [2, 5],
-              ],
-            },
-            {
-              name: "Pattern 3",
-              frets: [
-                [5, 7],
-                [5, 7],
-                [4, 7],
-                [5, 7],
-              ],
-            },
-            {
-              name: "Pattern 4",
-              frets: [
-                [7, 10],
-                [7, 10],
-                [7, 9],
-                [7, 10],
-              ],
-            },
-            {
-              name: "Pattern 5",
-              frets: [
-                [10, 12],
-                [10, 12],
-                [9, 12],
-                [10, 12],
               ],
             },
           ],
@@ -845,87 +323,15 @@ class MultiInstrumentApp {
                 [0, 3],
               ],
             },
-            {
-              name: "Box 2",
-              frets: [
-                [3, 5],
-                [3, 5],
-                [2, 5],
-                [3, 5],
-              ],
-            },
-            {
-              name: "Box 3",
-              frets: [
-                [5, 8],
-                [5, 8],
-                [5, 7],
-                [5, 8],
-              ],
-            },
-            {
-              name: "Box 4",
-              frets: [
-                [8, 10],
-                [8, 10],
-                [7, 10],
-                [8, 10],
-              ],
-            },
-            {
-              name: "Box 5",
-              frets: [
-                [10, 12],
-                [10, 12],
-                [10, 12],
-                [10, 12],
-              ],
-            },
           ],
         },
         chords: {
-          // Major Chords
           C: {
             name: "C",
             fingering: "0003",
             fingers: [null, null, null, 3],
             description: "C Major",
             variant: "Open Position",
-          },
-          C_alt: {
-            name: "C",
-            fingering: "5433",
-            fingers: [4, 3, 2, 1],
-            description: "C Major",
-            variant: "5th fret",
-          },
-          D: {
-            name: "D",
-            fingering: "2220",
-            fingers: [2, 2, 2, null],
-            description: "D Major",
-            variant: "Open Position",
-          },
-          D_alt: {
-            name: "D",
-            fingering: "7655",
-            fingers: [4, 2, 1, 1],
-            description: "D Major",
-            variant: "7th fret",
-          },
-          E: {
-            name: "E",
-            fingering: "4442",
-            fingers: [3, 3, 3, 1],
-            description: "E Major",
-            variant: "4th fret",
-          },
-          E_alt: {
-            name: "E",
-            fingering: "1402",
-            fingers: [1, 3, null, 2],
-            description: "E Major",
-            variant: "1st fret",
           },
           F: {
             name: "F",
@@ -934,57 +340,13 @@ class MultiInstrumentApp {
             description: "F Major",
             variant: "Open Position",
           },
-          F_barre: {
-            name: "F",
-            fingering: "5558",
-            fingers: [1, 1, 1, 4],
-            description: "F Major",
-            variant: "Barre 5th fret",
-          },
           G: {
             name: "G",
             fingering: "0232",
             fingers: [null, 2, 3, 2],
-            description: "G Major", 
-            variant: "Open Position",
-          },
-          G_alt: {
-            name: "G",
-            fingering: "0787",
-            fingers: [null, 1, 4, 1],
             description: "G Major",
-            variant: "7th fret",
-          },
-          A: {
-            name: "A",
-            fingering: "2100",
-            fingers: [2, 1, null, null],
-            description: "A Major",
             variant: "Open Position",
           },
-          A_barre: {
-            name: "A",
-            fingering: "2225",
-            fingers: [1, 1, 1, 4],
-            description: "A Major",
-            variant: "Barre 2nd fret",
-          },
-          B: {
-            name: "B",
-            fingering: "4322",
-            fingers: [4, 2, 1, 1],
-            description: "B Major",
-            variant: "4th fret",
-          },
-          Bb: {
-            name: "Bb",
-            fingering: "3211",
-            fingers: [3, 2, 1, 1],
-            description: "B♭ Major",
-            variant: "3rd fret",
-          },
-
-          // Minor Chords
           Am: {
             name: "Am",
             fingering: "2000",
@@ -992,404 +354,14 @@ class MultiInstrumentApp {
             description: "A Minor",
             variant: "Open Position",
           },
-          Am_alt: {
-            name: "Am",
-            fingering: "2433",
-            fingers: [1, 2, 3, 3],
-            description: "A Minor",
-            variant: "Alternative",
-          },
-          Dm: {
-            name: "Dm",
-            fingering: "2210",
-            fingers: [2, 2, 1, null],
-            description: "D Minor",
-            variant: "Open Position",
-          },
-          Dm_alt: {
-            name: "Dm",
-            fingering: "7988",
-            fingers: [1, 2, 3, 3],
-            description: "D Minor",
-            variant: "7th fret",
-          },
-          Em: {
-            name: "Em",
-            fingering: "0432",
-            fingers: [null, 4, 3, 2],
-            description: "E Minor",
-            variant: "Open Position",
-          },
-          Em_alt: {
-            name: "Em",
-            fingering: "9987",
-            fingers: [3, 3, 2, 1],
-            description: "E Minor",
-            variant: "9th fret",
-          },
-          Fm: {
-            name: "Fm",
-            fingering: "1013",
-            fingers: [1, null, 1, 3],
-            description: "F Minor",
-            variant: "Open Position",
-          },
-          Gm: {
-            name: "Gm",
-            fingering: "0231",
-            fingers: [null, 2, 3, 1],
-            description: "G Minor",
-            variant: "Open Position",
-          },
-          Bm: {
-            name: "Bm",
-            fingering: "4222",
-            fingers: [3, 1, 1, 1],
-            description: "B Minor",
-            variant: "4th fret",
-          },
-          Cm: {
-            name: "Cm",
-            fingering: "0333",
-            fingers: [null, 1, 2, 3],
-            description: "C Minor",
-            variant: "Open Position",
-          },
-
-          // 7th Chords
-          C7: {
-            name: "C7",
-            fingering: "0001",
-            fingers: [null, null, null, 1],
-            description: "C Dominant 7th",
-            variant: "Open Position",
-          },
-          C7_alt: {
-            name: "C7",
-            fingering: "3433",
-            fingers: [2, 3, 2, 2],
-            description: "C Dominant 7th",
-            variant: "3rd fret",
-          },
-          D7: {
-            name: "D7",
-            fingering: "2223",
-            fingers: [2, 2, 2, 3],
-            description: "D Dominant 7th",
-            variant: "Open Position",
-          },
-          E7: {
-            name: "E7",
-            fingering: "1202",
-            fingers: [1, 2, null, 3],
-            description: "E Dominant 7th",
-            variant: "Open Position",
-          },
-          F7: {
-            name: "F7",
-            fingering: "2313",
-            fingers: [2, 3, 1, 4],
-            description: "F Dominant 7th",
-            variant: "Open Position",
-          },
-          G7: {
-            name: "G7",
-            fingering: "0212",
-            fingers: [null, 2, 1, 3],
-            description: "G Dominant 7th",
-            variant: "Open Position",
-          },
-          A7: {
-            name: "A7",
-            fingering: "0100",
-            fingers: [null, 1, null, null],
-            description: "A Dominant 7th",
-            variant: "Open Position",
-          },
-          B7: {
-            name: "B7",
-            fingering: "2322",
-            fingers: [2, 3, 1, 1],
-            description: "B Dominant 7th",
-            variant: "Open Position",
-          },
-
-          // Minor 7th Chords
-          Am7: {
-            name: "Am7",
-            fingering: "0000",
-            fingers: [null, null, null, null],
-            description: "A Minor 7th",
-            variant: "Open Position",
-          },
-          Dm7: {
-            name: "Dm7",
-            fingering: "2213",
-            fingers: [2, 2, 1, 3],
-            description: "D Minor 7th",
-            variant: "Open Position",
-          },
-          Em7: {
-            name: "Em7",
-            fingering: "0202",
-            fingers: [null, 2, null, 2],
-            description: "E Minor 7th",
-            variant: "Open Position",
-          },
-          Fm7: {
-            name: "Fm7",
-            fingering: "1313",
-            fingers: [1, 3, 1, 3],
-            description: "F Minor 7th",
-            variant: "1st fret",
-          },
-          Gm7: {
-            name: "Gm7",
-            fingering: "0211",
-            fingers: [null, 2, 1, 1],
-            description: "G Minor 7th",
-            variant: "Open Position",
-          },
-          Cm7: {
-            name: "Cm7",
-            fingering: "3333",
-            fingers: [1, 1, 1, 1],
-            description: "C Minor 7th",
-            variant: "3rd fret",
-          },
-
-          // Major 7th Chords
-          Cmaj7: {
-            name: "Cmaj7",
-            fingering: "0002",
-            fingers: [null, null, null, 2],
-            description: "C Major 7th",
-            variant: "Open Position",
-          },
-          Dmaj7: {
-            name: "Dmaj7",
-            fingering: "2224",
-            fingers: [1, 1, 1, 2],
-            description: "D Major 7th",
-            variant: "Open Position",
-          },
-          Fmaj7: {
-            name: "Fmaj7",
-            fingering: "2400",
-            fingers: [2, 4, null, null],
-            description: "F Major 7th",
-            variant: "Open Position",
-          },
-          Gmaj7: {
-            name: "Gmaj7",
-            fingering: "0222",
-            fingers: [null, 1, 2, 3],
-            description: "G Major 7th",
-            variant: "Open Position",
-          },
-          Amaj7: {
-            name: "Amaj7",
-            fingering: "1100",
-            fingers: [1, 1, null, null],
-            description: "A Major 7th",
-            variant: "Open Position",
-          },
-
-          // Sus Chords
-          Csus2: {
-            name: "Csus2",
-            fingering: "0233",
-            fingers: [null, 2, 3, 3],
-            description: "C Suspended 2nd",
-            variant: "Open Position",
-          },
-          Csus4: {
-            name: "Csus4",
-            fingering: "0013",
-            fingers: [null, null, 1, 3],
-            description: "C Suspended 4th",
-            variant: "Open Position",
-          },
-          Dsus2: {
-            name: "Dsus2",
-            fingering: "2200",
-            fingers: [2, 2, null, null],
-            description: "D Suspended 2nd",
-            variant: "Open Position",
-          },
-          Dsus4: {
-            name: "Dsus4",
-            fingering: "2230",
-            fingers: [2, 2, 3, null],
-            description: "D Suspended 4th",
-            variant: "Open Position",
-          },
-          Fsus2: {
-            name: "Fsus2",
-            fingering: "0011",
-            fingers: [null, null, 1, 1],
-            description: "F Suspended 2nd",
-            variant: "Open Position",
-          },
-          Gsus2: {
-            name: "Gsus2",
-            fingering: "0230",
-            fingers: [null, 2, 3, null],
-            description: "G Suspended 2nd",
-            variant: "Open Position",
-          },
-          Gsus4: {
-            name: "Gsus4",
-            fingering: "0233",
-            fingers: [null, 2, 3, 3],
-            description: "G Suspended 4th",
-            variant: "Open Position",
-          },
-          Asus2: {
-            name: "Asus2",
-            fingering: "2400",
-            fingers: [2, 4, null, null],
-            description: "A Suspended 2nd",
-            variant: "Open Position",
-          },
-          Asus4: {
-            name: "Asus4",
-            fingering: "2200",
-            fingers: [2, 2, null, null],
-            description: "A Suspended 4th",
-            variant: "Open Position",
-          },
-
-          // Diminished & Augmented
-          Adim: {
-            name: "Adim",
-            fingering: "2323",
-            fingers: [1, 2, 1, 2],
-            description: "A Diminished",
-            variant: "2nd fret",
-          },
-          Cdim: {
-            name: "Cdim",
-            fingering: "0101",
-            fingers: [null, 1, null, 1],
-            description: "C Diminished",
-            variant: "Open Position",
-          },
-          Ddim: {
-            name: "Ddim",
-            fingering: "1212",
-            fingers: [1, 2, 1, 2],
-            description: "D Diminished",
-            variant: "1st fret",
-          },
-          Caug: {
-            name: "Caug",
-            fingering: "1003",
-            fingers: [1, null, null, 3],
-            description: "C Augmented",
-            variant: "Open Position",
-          },
-          Faug: {
-            name: "Faug",
-            fingering: "2110",
-            fingers: [2, 1, 1, null],
-            description: "F Augmented",
-            variant: "Open Position",
-          },
-
-          // 9th Chords
-          C9: {
-            name: "C9",
-            fingering: "0201",
-            fingers: [null, 2, null, 1],
-            description: "C Dominant 9th",
-            variant: "Open Position",
-          },
-          D9: {
-            name: "D9",
-            fingering: "2423",
-            fingers: [2, 4, 1, 3],
-            description: "D Dominant 9th",
-            variant: "2nd fret",
-          },
-          G9: {
-            name: "G9",
-            fingering: "0213",
-            fingers: [null, 2, 1, 3],
-            description: "G Dominant 9th",
-            variant: "Open Position",
-          },
-
-          // 6th Chords
-          C6: {
-            name: "C6",
-            fingering: "0000",
-            fingers: [null, null, null, null],
-            description: "C Major 6th",
-            variant: "Open Position",
-          },
-          F6: {
-            name: "F6",
-            fingering: "2213",
-            fingers: [2, 2, 1, 3],
-            description: "F Major 6th",
-            variant: "Open Position",
-          },
-          G6: {
-            name: "G6",
-            fingering: "0202",
-            fingers: [null, 2, null, 2],
-            description: "G Major 6th",
-            variant: "Open Position",
-          },
-          Am6: {
-            name: "Am6",
-            fingering: "2020",
-            fingers: [2, null, 2, null],
-            description: "A Minor 6th",
-            variant: "Open Position",
-          },
-
-          // Add/9 Chords
-          Cadd9: {
-            name: "Cadd9",
-            fingering: "0203",
-            fingers: [null, 2, null, 3],
-            description: "C Add 9",
-            variant: "Open Position",
-          },
-          Dadd9: {
-            name: "Dadd9",
-            fingering: "2420",
-            fingers: [2, 4, 2, null],
-            description: "D Add 9",
-            variant: "Open Position",
-          },
-          Fadd9: {
-            name: "Fadd9",
-            fingering: "0211",
-            fingers: [null, 2, 1, 1],
-            description: "F Add 9",
-            variant: "Open Position",
-          },
-          Gadd9: {
-            name: "Gadd9",
-            fingering: "0432",
-            fingers: [null, 4, 3, 2],
-            description: "G Add 9",
-            variant: "Open Position",
-          },
         },
         tips: [
           {
             title: "Ukulele Basics",
-            content: "Start with C, G, Am, and F - these four chords can play hundreds of songs! Practice smooth transitions."
+            content:
+              "Start with C, G, Am, and F - these four chords can play hundreds of songs!",
           },
-          {
-            title: "Strumming Patterns",
-            content: "Learn Down-Down-Up-Up-Down-Up (D-D-U-U-D-U) as your go-to strumming pattern."
-          },
-        ]
+        ],
       },
       mandolin: {
         name: "Mandolin",
@@ -1406,42 +378,6 @@ class MultiInstrumentApp {
                 [0, 3],
               ],
             },
-            {
-              name: "Pattern 2",
-              frets: [
-                [2, 4],
-                [2, 4],
-                [2, 4],
-                [3, 5],
-              ],
-            },
-            {
-              name: "Pattern 3",
-              frets: [
-                [4, 7],
-                [4, 7],
-                [4, 6],
-                [5, 7],
-              ],
-            },
-            {
-              name: "Pattern 4",
-              frets: [
-                [7, 9],
-                [7, 9],
-                [6, 9],
-                [7, 10],
-              ],
-            },
-            {
-              name: "Pattern 5",
-              frets: [
-                [9, 12],
-                [9, 12],
-                [9, 11],
-                [10, 12],
-              ],
-            },
           ],
           pentatonicMinor: [
             {
@@ -1453,101 +389,15 @@ class MultiInstrumentApp {
                 [0, 3],
               ],
             },
-            {
-              name: "Box 2",
-              frets: [
-                [3, 5],
-                [3, 5],
-                [2, 5],
-                [3, 5],
-              ],
-            },
-            {
-              name: "Box 3",
-              frets: [
-                [5, 8],
-                [5, 7],
-                [5, 7],
-                [5, 8],
-              ],
-            },
-            {
-              name: "Box 4",
-              frets: [
-                [8, 10],
-                [7, 10],
-                [7, 9],
-                [8, 10],
-              ],
-            },
-            {
-              name: "Box 5",
-              frets: [
-                [10, 12],
-                [10, 12],
-                [9, 12],
-                [10, 12],
-              ],
-            },
           ],
         },
         chords: {
-          // Major Chords
           C: {
             name: "C",
             fingering: "0230",
             fingers: [null, 2, 3, null],
             description: "C Major",
             variant: "Open Position",
-          },
-          C_alt: {
-            name: "C",
-            fingering: "5453",
-            fingers: [4, 3, 4, 2],
-            description: "C Major",
-            variant: "5th fret",
-          },
-          D: {
-            name: "D",
-            fingering: "0202",
-            fingers: [null, 2, null, 2],
-            description: "D Major",
-            variant: "Open Position",
-          },
-          D_alt: {
-            name: "D",
-            fingering: "7574",
-            fingers: [3, 2, 3, 1],
-            description: "D Major",
-            variant: "7th fret",
-          },
-          E: {
-            name: "E",
-            fingering: "2404",
-            fingers: [1, 3, null, 4],
-            description: "E Major",
-            variant: "Open Position",
-          },
-          E_alt: {
-            name: "E",
-            fingering: "9796",
-            fingers: [3, 2, 3, 1],
-            description: "E Major",
-            variant: "9th fret",
-          },
-          F: {
-            name: "F",
-            fingering: "1301",
-            fingers: [1, 3, null, 1],
-            description: "F Major", 
-            variant: "Open Position",
-          },
-          F_alt: {
-            name: "F",
-            fingering: "5535",
-            fingers: [2, 2, 1, 2],
-            description: "F Major",
-            variant: "5th fret",
           },
           G: {
             name: "G",
@@ -1556,43 +406,6 @@ class MultiInstrumentApp {
             description: "G Major",
             variant: "Open Position",
           },
-          G_alt: {
-            name: "G",
-            fingering: "3023",
-            fingers: [3, null, 2, 3],
-            description: "G Major",
-            variant: "3rd fret",
-          },
-          A: {
-            name: "A",
-            fingering: "2002",
-            fingers: [2, null, null, 2],
-            description: "A Major",
-            variant: "Open Position",
-          },
-          A_barre: {
-            name: "A",
-            fingering: "2222",
-            fingers: [1, 1, 1, 1],
-            description: "A Major",
-            variant: "Barre 2nd fret",
-          },
-          B: {
-            name: "B",
-            fingering: "4004",
-            fingers: [3, null, null, 4],
-            description: "B Major",
-            variant: "Open Position",
-          },
-          Bb: {
-            name: "Bb",
-            fingering: "3113",
-            fingers: [3, 1, 1, 3],
-            description: "B♭ Major",
-            variant: "3rd fret",
-          },
-
-          // Minor Chords
           Am: {
             name: "Am",
             fingering: "2210",
@@ -1600,455 +413,14 @@ class MultiInstrumentApp {
             description: "A Minor",
             variant: "Open Position",
           },
-          Am_alt: {
-            name: "Am",
-            fingering: "5355",
-            fingers: [3, 1, 3, 3],
-            description: "A Minor",
-            variant: "5th fret",
-          },
-          Dm: {
-            name: "Dm",
-            fingering: "0231",
-            fingers: [null, 2, 3, 1],
-            description: "D Minor",
-            variant: "Open Position",
-          },
-          Dm_alt: {
-            name: "Dm",
-            fingering: "7565",
-            fingers: [4, 2, 3, 2],
-            description: "D Minor",
-            variant: "7th fret",
-          },
-          Em: {
-            name: "Em",
-            fingering: "0200",
-            fingers: [null, 2, null, null],
-            description: "E Minor",
-            variant: "Open Position",
-          },
-          Em_alt: {
-            name: "Em",
-            fingering: "9787",
-            fingers: [4, 2, 3, 2],
-            description: "E Minor",
-            variant: "9th fret",
-          },
-          Fm: {
-            name: "Fm",
-            fingering: "1001",
-            fingers: [1, null, null, 1],
-            description: "F Minor",
-            variant: "Open Position",
-          },
-          Gm: {
-            name: "Gm",
-            fingering: "0113",
-            fingers: [null, 1, 1, 3],
-            description: "G Minor",
-            variant: "Open Position",
-          },
-          Bm: {
-            name: "Bm",
-            fingering: "2014",
-            fingers: [2, null, 1, 4],
-            description: "B Minor",
-            variant: "Open Position",
-          },
-          Cm: {
-            name: "Cm",
-            fingering: "0013",
-            fingers: [null, null, 1, 3],
-            description: "C Minor",
-            variant: "Open Position",
-          },
-
-          // 7th Chords
-          C7: {
-            name: "C7",
-            fingering: "0210",
-            fingers: [null, 2, 1, null],
-            description: "C Dominant 7th",
-            variant: "Open Position",
-          },
-          C7_alt: {
-            name: "C7",
-            fingering: "3233",
-            fingers: [3, 2, 3, 3],
-            description: "C Dominant 7th",
-            variant: "3rd fret",
-          },
-          D7: {
-            name: "D7",
-            fingering: "0200",
-            fingers: [null, 2, null, null],
-            description: "D Dominant 7th",
-            variant: "Open Position",
-          },
-          E7: {
-            name: "E7",
-            fingering: "2400",
-            fingers: [2, 4, null, null],
-            description: "E Dominant 7th",
-            variant: "Open Position",
-          },
-          F7: {
-            name: "F7",
-            fingering: "1311",
-            fingers: [1, 3, 1, 1],
-            description: "F Dominant 7th",
-            variant: "1st fret",
-          },
-          G7: {
-            name: "G7",
-            fingering: "0001",
-            fingers: [null, null, null, 1],
-            description: "G Dominant 7th",
-            variant: "Open Position",
-          },
-          A7: {
-            name: "A7",
-            fingering: "2000",
-            fingers: [2, null, null, null],
-            description: "A Dominant 7th",
-            variant: "Open Position",
-          },
-          B7: {
-            name: "B7",
-            fingering: "4202",
-            fingers: [4, 2, null, 2],
-            description: "B Dominant 7th",
-            variant: "Open Position",
-          },
-
-          // Minor 7th Chords
-          Am7: {
-            name: "Am7",
-            fingering: "2010",
-            fingers: [2, null, 1, null],
-            description: "A Minor 7th",
-            variant: "Open Position",
-          },
-          Dm7: {
-            name: "Dm7",
-            fingering: "0211",
-            fingers: [null, 2, 1, 1],
-            description: "D Minor 7th",
-            variant: "Open Position",
-          },
-          Em7: {
-            name: "Em7",
-            fingering: "0000",
-            fingers: [null, null, null, null],
-            description: "E Minor 7th",
-            variant: "Open Position",
-          },
-          Fm7: {
-            name: "Fm7",
-            fingering: "1311",
-            fingers: [1, 3, 1, 1],
-            description: "F Minor 7th",
-            variant: "1st fret",
-          },
-          Gm7: {
-            name: "Gm7",
-            fingering: "0111",
-            fingers: [null, 1, 1, 1],
-            description: "G Minor 7th",
-            variant: "Open Position",
-          },
-          Cm7: {
-            name: "Cm7",
-            fingering: "0313",
-            fingers: [null, 3, 1, 3],
-            description: "C Minor 7th",
-            variant: "Open Position",
-          },
-
-          // Major 7th Chords
-          Cmaj7: {
-            name: "Cmaj7",
-            fingering: "0220",
-            fingers: [null, 2, 2, null],
-            description: "C Major 7th",
-            variant: "Open Position",
-          },
-          Dmaj7: {
-            name: "Dmaj7",
-            fingering: "0201",
-            fingers: [null, 2, null, 1],
-            description: "D Major 7th",
-            variant: "Open Position",
-          },
-          Emaj7: {
-            name: "Emaj7",
-            fingering: "2404",
-            fingers: [1, 3, null, 4],
-            description: "E Major 7th",
-            variant: "Open Position",
-          },
-          Fmaj7: {
-            name: "Fmaj7",
-            fingering: "1200",
-            fingers: [1, 2, null, null],
-            description: "F Major 7th",
-            variant: "Open Position",
-          },
-          Gmaj7: {
-            name: "Gmaj7",
-            fingering: "0002",
-            fingers: [null, null, null, 2],
-            description: "G Major 7th",
-            variant: "Open Position",
-          },
-          Amaj7: {
-            name: "Amaj7",
-            fingering: "2001",
-            fingers: [2, null, null, 1],
-            description: "A Major 7th",
-            variant: "Open Position",
-          },
-
-          // Sus Chords
-          Csus2: {
-            name: "Csus2",
-            fingering: "0200",
-            fingers: [null, 2, null, null],
-            description: "C Suspended 2nd",
-            variant: "Open Position",
-          },
-          Csus4: {
-            name: "Csus4",
-            fingering: "0240",
-            fingers: [null, 2, 4, null],
-            description: "C Suspended 4th",
-            variant: "Open Position",
-          },
-          Dsus2: {
-            name: "Dsus2",
-            fingering: "0000",
-            fingers: [null, null, null, null],
-            description: "D Suspended 2nd",
-            variant: "Open Position",
-          },
-          Dsus4: {
-            name: "Dsus4",
-            fingering: "0203",
-            fingers: [null, 2, null, 3],
-            description: "D Suspended 4th",
-            variant: "Open Position",
-          },
-          Fsus2: {
-            name: "Fsus2",
-            fingering: "1101",
-            fingers: [1, 1, null, 1],
-            description: "F Suspended 2nd",
-            variant: "1st fret",
-          },
-          Gsus2: {
-            name: "Gsus2",
-            fingering: "0002",
-            fingers: [null, null, null, 2],
-            description: "G Suspended 2nd",
-            variant: "Open Position",
-          },
-          Gsus4: {
-            name: "Gsus4",
-            fingering: "0013",
-            fingers: [null, null, 1, 3],
-            description: "G Suspended 4th",
-            variant: "Open Position",
-          },
-          Asus2: {
-            name: "Asus2",
-            fingering: "2202",
-            fingers: [2, 2, null, 2],
-            description: "A Suspended 2nd",
-            variant: "Open Position",
-          },
-          Asus4: {
-            name: "Asus4",
-            fingering: "2032",
-            fingers: [2, null, 3, 2],
-            description: "A Suspended 4th",
-            variant: "Open Position",
-          },
-
-          // Diminished & Augmented
-          Adim: {
-            name: "Adim",
-            fingering: "2313",
-            fingers: [2, 3, 1, 4],
-            description: "A Diminished",
-            variant: "2nd fret",
-          },
-          Cdim: {
-            name: "Cdim",
-            fingering: "0130",
-            fingers: [null, 1, 3, null],
-            description: "C Diminished",
-            variant: "Open Position",
-          },
-          Ddim: {
-            name: "Ddim",
-            fingering: "0101",
-            fingers: [null, 1, null, 1],
-            description: "D Diminished",
-            variant: "Open Position",
-          },
-          Gdim: {
-            name: "Gdim",
-            fingering: "0212",
-            fingers: [null, 2, 1, 2],
-            description: "G Diminished",
-            variant: "Open Position",
-          },
-          Caug: {
-            name: "Caug",
-            fingering: "0231",
-            fingers: [null, 2, 3, 1],
-            description: "C Augmented",
-            variant: "Open Position",
-          },
-          Faug: {
-            name: "Faug",
-            fingering: "1402",
-            fingers: [1, 4, null, 2],
-            description: "F Augmented",
-            variant: "Open Position",
-          },
-
-          // 9th Chords
-          C9: {
-            name: "C9",
-            fingering: "0230",
-            fingers: [null, 2, 3, null],
-            description: "C Dominant 9th",
-            variant: "Open Position",
-          },
-          D9: {
-            name: "D9",
-            fingering: "0212",
-            fingers: [null, 2, 1, 2],
-            description: "D Dominant 9th",
-            variant: "Open Position",
-          },
-          G9: {
-            name: "G9",
-            fingering: "0203",
-            fingers: [null, 2, null, 3],
-            description: "G Dominant 9th",
-            variant: "Open Position",
-          },
-
-          // 6th Chords
-          C6: {
-            name: "C6",
-            fingering: "0030",
-            fingers: [null, null, 3, null],
-            description: "C Major 6th",
-            variant: "Open Position",
-          },
-          D6: {
-            name: "D6",
-            fingering: "0204",
-            fingers: [null, 2, null, 4],
-            description: "D Major 6th",
-            variant: "Open Position",
-          },
-          F6: {
-            name: "F6",
-            fingering: "1303",
-            fingers: [1, 3, null, 3],
-            description: "F Major 6th",
-            variant: "1st fret",
-          },
-          G6: {
-            name: "G6",
-            fingering: "0003",
-            fingers: [null, null, null, 3],
-            description: "G Major 6th",
-            variant: "Open Position",
-          },
-          Am6: {
-            name: "Am6",
-            fingering: "2010",
-            fingers: [2, null, 1, null],
-            description: "A Minor 6th",
-            variant: "Open Position",
-          },
-
-          // Add/9 Chords
-          Cadd9: {
-            name: "Cadd9",
-            fingering: "0032",
-            fingers: [null, null, 3, 2],
-            description: "C Add 9",
-            variant: "Open Position",
-          },
-          Dadd9: {
-            name: "Dadd9",
-            fingering: "0002",
-            fingers: [null, null, null, 2],
-            description: "D Add 9",
-            variant: "Open Position",
-          },
-          Fadd9: {
-            name: "Fadd9",
-            fingering: "1001",
-            fingers: [1, null, null, 1],
-            description: "F Add 9",
-            variant: "Open Position",
-          },
-          Gadd9: {
-            name: "Gadd9",
-            fingering: "0005",
-            fingers: [null, null, null, 4],
-            description: "G Add 9",
-            variant: "Open Position",
-          },
-
-          // Power Chords (simplified for mandolin)
-          C5: {
-            name: "C5",
-            fingering: "0030",
-            fingers: [null, null, 3, null],
-            description: "C Power Chord",
-            variant: "Open Position",
-          },
-          D5: {
-            name: "D5",
-            fingering: "0002",
-            fingers: [null, null, null, 2],
-            description: "D Power Chord",
-            variant: "Open Position",
-          },
-          G5: {
-            name: "G5",
-            fingering: "0000",
-            fingers: [null, null, null, null],
-            description: "G Power Chord",
-            variant: "Open Position",
-          },
-          A5: {
-            name: "A5",
-            fingering: "2000",
-            fingers: [2, null, null, null],
-            description: "A Power Chord",
-            variant: "Open Position",
-          },
         },
         tips: [
           {
             title: "Mandolin Basics",
-            content: "Mandolin strings come in pairs tuned to the same pitch. Pick both strings together for full sound."
+            content:
+              "Mandolin strings come in pairs tuned to the same pitch. Pick both strings together for full sound.",
           },
-          {
-            title: "Tremolo Technique",
-            content: "Practice tremolo picking - rapid alternating picking to sustain notes. Essential for mandolin expression."
-          },
-        ]
+        ],
       },
     };
 
@@ -2074,7 +446,7 @@ class MultiInstrumentApp {
 
   init() {
     this.setupEventListeners();
-    this.switchInstrument('guitar');
+    this.switchInstrument("guitar");
     this.updateAudioStatus();
   }
 
@@ -2176,6 +548,11 @@ class MultiInstrumentApp {
       .addEventListener("input", (e) => {
         this.filterChords(e.target.value);
       });
+
+    // Tuner controls
+    document.getElementById("tunerButton").addEventListener("click", () => {
+      this.openTuner();
+    });
   }
 
   switchInstrument(instrument) {
@@ -2190,7 +567,8 @@ class MultiInstrumentApp {
     });
 
     // Update title
-    document.getElementById("instrumentTitle").textContent = this.currentInstrumentConfig.name;
+    document.getElementById("instrumentTitle").textContent =
+      this.currentInstrumentConfig.name;
 
     // Reset to pattern view
     this.isShowingFullNeck = false;
@@ -2209,10 +587,10 @@ class MultiInstrumentApp {
   updateTips() {
     const tipsGrid = document.getElementById("tipsGrid");
     const instrumentTips = this.currentInstrumentConfig.tips;
-    
+
     // Clear existing tips and add instrument-specific ones
-    tipsGrid.innerHTML = '';
-    
+    tipsGrid.innerHTML = "";
+
     // Add common tips
     const commonTips = [
       {
@@ -2220,19 +598,19 @@ class MultiInstrumentApp {
         content: `Start with Pattern 1 and learn it thoroughly<br />
           • Practice slowly with a metronome<br />
           • Focus on clean fretting and picking<br />
-          • Memorize the root note positions`
+          • Memorize the root note positions`,
       },
       {
-        title: "Using This Tool", 
+        title: "Using This Tool",
         content: `Click "Initialize Audio" first to enable sound<br />
           • Click any note on the fretboard to hear it<br />
           • Try "Full Neck Scale" for complete practice<br />
-          • Use the chord chart for rhythm practice`
-      }
+          • Use the chord chart for rhythm practice`,
+      },
     ];
 
     // Add all tips
-    [...commonTips, ...instrumentTips].forEach(tip => {
+    [...commonTips, ...instrumentTips].forEach((tip) => {
       const tipSection = document.createElement("div");
       tipSection.className = "tips-section";
       tipSection.innerHTML = `
@@ -2302,7 +680,8 @@ class MultiInstrumentApp {
 
   updatePatternOptions() {
     const patternSelect = document.getElementById("patternSelect");
-    const patterns = this.scalePatterns[this.selectedScale] || this.scalePatterns.major;
+    const patterns =
+      this.scalePatterns[this.selectedScale] || this.scalePatterns.major;
     const currentPattern = this.selectedPattern;
     patternSelect.innerHTML = "";
     patterns.forEach((pattern, index) => {
@@ -2354,7 +733,8 @@ class MultiInstrumentApp {
   }
 
   getPatternFrets() {
-    const patterns = this.scalePatterns[this.selectedScale] || this.scalePatterns.major;
+    const patterns =
+      this.scalePatterns[this.selectedScale] || this.scalePatterns.major;
     return patterns[this.selectedPattern] || patterns[0];
   }
 
@@ -2363,18 +743,21 @@ class MultiInstrumentApp {
     const stringCount = this.tuning.length;
 
     // Create pattern based on instrument string count
-    const positions = this.currentInstrument === 'guitar' ? [
-      { start: 0, end: 3, strings: [0, 1, 2] }, 
-      { start: 2, end: 5, strings: [1, 2, 3] }, 
-      { start: 4, end: 7, strings: [2, 3, 4] }, 
-      { start: 7, end: 10, strings: [3, 4, 5] }, 
-      { start: 9, end: 12, strings: [4, 5] }, 
-    ] : [
-      { start: 0, end: 4, strings: [0, 1] }, 
-      { start: 3, end: 7, strings: [1, 2] }, 
-      { start: 6, end: 10, strings: [2, 3] }, 
-      { start: 9, end: 12, strings: [2, 3] }, 
-    ];
+    const positions =
+      this.currentInstrument === "guitar"
+        ? [
+            { start: 0, end: 3, strings: [0, 1, 2] },
+            { start: 2, end: 5, strings: [1, 2, 3] },
+            { start: 4, end: 7, strings: [2, 3, 4] },
+            { start: 7, end: 10, strings: [3, 4, 5] },
+            { start: 9, end: 12, strings: [4, 5] },
+          ]
+        : [
+            { start: 0, end: 4, strings: [0, 1] },
+            { start: 3, end: 7, strings: [1, 2] },
+            { start: 6, end: 10, strings: [2, 3] },
+            { start: 9, end: 12, strings: [2, 3] },
+          ];
 
     positions.forEach((pos, posIndex) => {
       const positionNotes = [];
@@ -2595,10 +978,10 @@ class MultiInstrumentApp {
     const infoIcon = document.getElementById("infoIcon");
     if (this.showInfo) {
       infoPanel.classList.remove("hidden");
-      infoIcon.textContent = "⌃";
+      infoIcon.textContent = "▲";
     } else {
       infoPanel.classList.add("hidden");
-      infoIcon.textContent = "⌄";
+      infoIcon.textContent = "▼";
     }
   }
 
@@ -2651,10 +1034,12 @@ class MultiInstrumentApp {
 
     const fingeringArray = chord.fingering.split("");
     const stringCount = this.tuning.length;
-    
+
     // Adjust diagram for string count
     if (fingeringArray.length !== stringCount) {
-      console.warn(`Chord ${chord.name} fingering doesn't match instrument string count`);
+      console.warn(
+        `Chord ${chord.name} fingering doesn't match instrument string count`
+      );
     }
 
     const fretNumbers = fingeringArray
@@ -2677,7 +1062,7 @@ class MultiInstrumentApp {
       frets.appendChild(fretLine);
     }
 
-    // Create string lines 
+    // Create string lines
     for (let i = 0; i < stringCount; i++) {
       const stringLine = document.createElement("div");
       stringLine.className = "chord-string-line";
@@ -2688,7 +1073,7 @@ class MultiInstrumentApp {
     // Add finger positions
     fingeringArray.forEach((fret, stringIndex) => {
       if (stringIndex >= stringCount) return;
-      
+
       const stringPos = (stringIndex * 100) / (stringCount - 1);
 
       if (fret === "0") {
@@ -2715,7 +1100,7 @@ class MultiInstrumentApp {
 
           let relativePos;
           if (isOpenChord) {
-            relativePos = (fretNum - 0.5) * 25; 
+            relativePos = (fretNum - 0.5) * 25;
           } else {
             relativePos = ((fretNum - startFret - 0.5) * 100) / 4;
           }
@@ -2817,7 +1202,11 @@ class MultiInstrumentApp {
     const fingeringArray = chord.fingering.split("");
     const frequencies = [];
     fingeringArray.forEach((fret, stringIndex) => {
-      if (fret !== "x" && fret !== undefined && stringIndex < this.tuning.length) {
+      if (
+        fret !== "x" &&
+        fret !== undefined &&
+        stringIndex < this.tuning.length
+      ) {
         const fretNum = fret === "0" ? 0 : parseInt(fret);
         if (!isNaN(fretNum)) {
           const frequency = this.getFreqForFret(stringIndex, fretNum);
@@ -2843,6 +1232,248 @@ class MultiInstrumentApp {
     document.getElementById("playText").textContent = this.isShowingFullNeck
       ? "Play Full Neck"
       : "Play Pattern";
+  }
+
+  // Tuner Methods
+  openTuner() {
+    const modal = document.getElementById("tunerModal");
+    modal.classList.remove("hidden");
+    this.generateStringTargets();
+
+    // Add event listeners when modal opens
+    document.getElementById("closeTunerBtn").onclick = () => this.closeTuner();
+    document.getElementById("tunerOverlay").onclick = () => this.closeTuner();
+    document.getElementById("startTunerBtn").onclick = () => this.startTuner();
+    document.getElementById("stopTunerBtn").onclick = () => this.stopTuner();
+  }
+
+  closeTuner() {
+    const modal = document.getElementById("tunerModal");
+    modal.classList.add("hidden");
+    this.stopTuner();
+
+    // Remove event listeners when modal closes
+    document.getElementById("closeTunerBtn").onclick = null;
+    document.getElementById("tunerOverlay").onclick = null;
+    document.getElementById("startTunerBtn").onclick = null;
+    document.getElementById("stopTunerBtn").onclick = null;
+  }
+
+  generateStringTargets() {
+    const targetsContainer = document.getElementById("stringTargets");
+    targetsContainer.innerHTML = "";
+
+    const tuning = this.tuning;
+    const frequencies = this.currentInstrumentConfig.openStringFreqs;
+
+    tuning.forEach((note, index) => {
+      const target = document.createElement("div");
+      target.className = "string-target";
+      target.innerHTML = `
+        <div class="target-string">String ${index + 1}</div>
+        <div class="target-note">${note}</div>
+        <div class="target-freq">${Math.round(frequencies[index])} Hz</div>
+      `;
+      targetsContainer.appendChild(target);
+    });
+  }
+
+  async startTuner() {
+    try {
+      // Request microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false,
+        },
+      });
+
+      // Create audio context for tuner (separate from synth)
+      this.tunerAudioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      this.microphone = this.tunerAudioContext.createMediaStreamSource(stream);
+      this.analyser = this.tunerAudioContext.createAnalyser();
+
+      // Configure analyser for pitch detection
+      this.analyser.fftSize = 8192;
+      this.analyser.smoothingTimeConstant = 0.3;
+
+      this.microphone.connect(this.analyser);
+
+      this.tunerActive = true;
+
+      // Update UI
+      document.getElementById("startTunerBtn").classList.add("hidden");
+      document.getElementById("stopTunerBtn").classList.remove("hidden");
+      document.getElementById("tunerStatusText").textContent =
+        "🎤 Listening... play a note";
+
+      // Start analysis loop
+      this.analyzeTuning();
+    } catch (error) {
+      console.error("Microphone access denied:", error);
+      document.getElementById("tunerStatusText").textContent =
+        "❌ Microphone access required";
+    }
+  }
+
+  stopTuner() {
+    this.tunerActive = false;
+
+    if (this.tunerAnimationFrame) {
+      cancelAnimationFrame(this.tunerAnimationFrame);
+      this.tunerAnimationFrame = null;
+    }
+
+    // Properly stop microphone stream
+    if (this.microphone && this.microphone.mediaStream) {
+      this.microphone.mediaStream.getTracks().forEach((track) => track.stop());
+    }
+
+    if (this.tunerAudioContext && this.tunerAudioContext.state !== "closed") {
+      this.tunerAudioContext.close();
+      this.tunerAudioContext = null;
+    }
+
+    // Reset UI
+    document.getElementById("startTunerBtn").classList.remove("hidden");
+    document.getElementById("stopTunerBtn").classList.add("hidden");
+    document.getElementById("tunerStatusText").textContent =
+      "Click 'Start Tuner' to begin";
+    document.getElementById("noteDisplay").textContent = "--";
+    document.getElementById("frequencyDisplay").textContent = "-- Hz";
+
+    // Reset needle and targets
+    const needle = document.getElementById("tuningNeedle");
+    if (needle) needle.style.left = "50%";
+
+    document.querySelectorAll(".string-target").forEach((target) => {
+      target.classList.remove("active", "in-tune");
+    });
+  }
+
+  analyzeTuning() {
+    if (!this.tunerActive || !this.analyser) return;
+
+    const bufferLength = this.analyser.frequencyBinCount;
+    const dataArray = new Float32Array(bufferLength);
+    this.analyser.getFloatFrequencyData(dataArray);
+
+    // Find the fundamental frequency
+    const frequency = this.findFundamentalFreq(dataArray);
+
+    if (frequency > 50 && frequency < 2000) {
+      const note = this.frequencyToNote(frequency);
+      const { noteName, cents } = note;
+
+      // Update displays
+      document.getElementById("noteDisplay").textContent = noteName;
+      document.getElementById("frequencyDisplay").textContent = `${Math.round(
+        frequency
+      )} Hz`;
+
+      // Update tuning needle (cents range: -50 to +50)
+      const needlePosition = Math.max(0, Math.min(100, 50 + cents * 0.8));
+      document.getElementById("tuningNeedle").style.left = `${needlePosition}%`;
+
+      // Update string targets
+      this.updateStringTargets(noteName, frequency, cents);
+    } else {
+      document.getElementById("noteDisplay").textContent = "--";
+      document.getElementById("frequencyDisplay").textContent = "-- Hz";
+      document.getElementById("tuningNeedle").style.left = "50%";
+      document.querySelectorAll(".string-target").forEach((target) => {
+        target.classList.remove("active", "in-tune");
+      });
+    }
+
+    this.tunerAnimationFrame = requestAnimationFrame(() =>
+      this.analyzeTuning()
+    );
+  }
+
+  findFundamentalFreq(frequencyData) {
+    const sampleRate = this.tunerAudioContext.sampleRate;
+    const nyquist = sampleRate / 2;
+    const bufferLength = frequencyData.length;
+
+    // Find the peak frequency
+    let maxIndex = 0;
+    let maxValue = -Infinity;
+
+    // Focus on musical range (80Hz to 1000Hz)
+    const minIndex = Math.floor((80 / nyquist) * bufferLength);
+    const maxIndexLimit = Math.floor((1000 / nyquist) * bufferLength);
+
+    for (let i = minIndex; i < maxIndexLimit; i++) {
+      if (frequencyData[i] > maxValue) {
+        maxValue = frequencyData[i];
+        maxIndex = i;
+      }
+    }
+
+    // Convert index to frequency
+    const frequency = (maxIndex / bufferLength) * nyquist;
+
+    // Only return if signal is strong enough
+    return maxValue > -40 ? frequency : 0;
+  }
+
+  frequencyToNote(frequency) {
+    const A4_FREQ = 440;
+    const A4_INDEX = 57; // A4 is the 57th key on piano (starting from C0)
+
+    // Calculate note index from frequency
+    const noteIndex =
+      Math.round(12 * Math.log2(frequency / A4_FREQ)) + A4_INDEX;
+
+    // Calculate exact frequency for this note
+    const exactFreq = A4_FREQ * Math.pow(2, (noteIndex - A4_INDEX) / 12);
+
+    // Calculate cents deviation
+    const cents = Math.round(1200 * Math.log2(frequency / exactFreq));
+
+    // Get note name
+    const noteNames = [
+      "C",
+      "C#",
+      "D",
+      "D#",
+      "E",
+      "F",
+      "F#",
+      "G",
+      "G#",
+      "A",
+      "A#",
+      "B",
+    ];
+    const noteName = noteNames[noteIndex % 12];
+
+    return { noteName, cents, exactFreq };
+  }
+
+  updateStringTargets(detectedNote, frequency, cents) {
+    const tuning = this.tuning;
+    const targetFreqs = this.currentInstrumentConfig.openStringFreqs;
+
+    document.querySelectorAll(".string-target").forEach((target, index) => {
+      target.classList.remove("active", "in-tune");
+
+      const targetNote = tuning[index];
+      const targetFreq = targetFreqs[index];
+
+      // Check if this string matches the detected note
+      if (detectedNote === targetNote) {
+        target.classList.add("active");
+
+        // Check if it's in tune (within ±10 cents)
+        if (Math.abs(cents) <= 10) {
+          target.classList.add("in-tune");
+        }
+      }
+    });
   }
 }
 
