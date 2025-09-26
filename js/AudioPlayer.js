@@ -10,28 +10,53 @@ class AudioPlayer {
     this.currentPlayingFret = { string: -1, fret: -1 };
   }
 
-  playScale(instrumentName, selectedKey, selectedScale, selectedPattern, isShowingFullNeck, tempo, noteDuration) {
+  playScale(
+    instrumentName,
+    selectedKey,
+    selectedScale,
+    selectedPattern,
+    isShowingFullNeck,
+    tempo,
+    noteDuration
+  ) {
     if (!this.audioSynth.isInitialized) {
-      alert("Please initialize audio first by clicking the 'Initialize Audio' button.");
+      alert(
+        "Please initialize audio first by clicking the 'Initialize Audio' button."
+      );
       return;
     }
 
     this.isPlaying = true;
-    document.getElementById("playIcon").textContent = "⏸️";
-    document.getElementById("playText").textContent = "Stop";
+    document.getElementById("playIcon").textContent = "PAUSE";
+    document.getElementById("playIconSvg").classList.add("hidden");
+    document.getElementById("pauseIconSvg").classList.remove("hidden");
 
     let sequence = [];
 
     if (isShowingFullNeck) {
-      sequence = this.fretboardRenderer.getFullNeckPattern(instrumentName, selectedKey, selectedScale);
+      sequence = this.fretboardRenderer.getFullNeckPattern(
+        instrumentName,
+        selectedKey,
+        selectedScale
+      );
     } else {
-      const patternFrets = this.fretboardRenderer.getPatternFrets(instrumentName, selectedScale, selectedPattern);
+      const patternFrets = this.fretboardRenderer.getPatternFrets(
+        instrumentName,
+        selectedScale,
+        selectedPattern
+      );
       const instrument = this.instrumentData.getInstrument(instrumentName);
-      
+
       patternFrets.frets.forEach((stringFrets, stringIndex) => {
         for (let fret = stringFrets[0]; fret <= stringFrets[1]; fret++) {
-          const note = this.fretboardRenderer.getNoteAtFret(stringIndex, fret, instrument.tuning);
-          if (this.fretboardRenderer.isInScale(note, selectedKey, selectedScale)) {
+          const note = this.fretboardRenderer.getNoteAtFret(
+            stringIndex,
+            fret,
+            instrument.tuning
+          );
+          if (
+            this.fretboardRenderer.isInScale(note, selectedKey, selectedScale)
+          ) {
             sequence.push({ note, string: stringIndex, fret });
           }
         }
@@ -44,27 +69,33 @@ class AudioPlayer {
         this.stopPlaying(isShowingFullNeck);
         return;
       }
-      
+
       document.querySelectorAll(".note-playing").forEach((el) => {
         el.classList.remove("note-playing");
       });
-      
+
       const { note, string, fret } = sequence[noteIndex];
       this.currentPlayingFret = { string, fret };
-      
-      const fretElement = document.querySelector(`[data-string="${string}"][data-fret="${fret}"]`);
+
+      const fretElement = document.querySelector(
+        `[data-string="${string}"][data-fret="${fret}"]`
+      );
       if (fretElement) {
         fretElement.classList.add("note-playing");
       }
-      
+
       const instrument = this.instrumentData.getInstrument(instrumentName);
-      const frequency = this.fretboardRenderer.getFreqForFret(string, fret, instrument.openStringFreqs);
+      const frequency = this.fretboardRenderer.getFreqForFret(
+        string,
+        fret,
+        instrument.openStringFreqs
+      );
       this.audioSynth.playNote(frequency, noteDuration);
-      
+
       noteIndex++;
       setTimeout(playNext, 60000 / tempo);
     };
-    
+
     playNext();
   }
 
@@ -73,18 +104,21 @@ class AudioPlayer {
     this.isPlayingFullNeck = false;
     this.currentNote = -1;
     this.currentPlayingFret = { string: -1, fret: -1 };
-    
+
     document.querySelectorAll(".note-playing").forEach((el) => {
       el.classList.remove("note-playing");
     });
-    
-    document.getElementById("playIcon").textContent = "▶️";
-    document.getElementById("playText").textContent = isShowingFullNeck ? "Play Full Neck" : "Play Pattern";
+
+    document.getElementById("playIcon").textContent = "PLAY";
+    document.getElementById("playIconSvg").classList.remove("hidden");
+    document.getElementById("pauseIconSvg").classList.add("hidden");
   }
 
   updatePlayButtonsState() {
-    document.getElementById("playButton").disabled = !this.audioSynth.isInitialized;
-    document.getElementById("playFullNeckBtn").disabled = !this.audioSynth.isInitialized;
+    document.getElementById("playButton").disabled =
+      !this.audioSynth.isInitialized;
+    document.getElementById("playFullNeckBtn").disabled =
+      !this.audioSynth.isInitialized;
   }
 
   getIsPlaying() {

@@ -119,7 +119,13 @@ class MultiInstrumentApp {
       }
     });
 
+    document.getElementById("byPositionBtn").addEventListener("click", () => {
+      if (!this.isShowingFullNeck) return; // Already in position mode
+      this.toggleFullNeckView();
+    });
+
     document.getElementById("playFullNeckBtn").addEventListener("click", () => {
+      if (this.isShowingFullNeck) return; // Already in full neck mode
       this.toggleFullNeckView();
     });
   }
@@ -148,6 +154,8 @@ class MultiInstrumentApp {
 
     // Reset to pattern view
     this.isShowingFullNeck = false;
+    document.getElementById("byPositionBtn").classList.add("active");
+    document.getElementById("playFullNeckBtn").classList.remove("active");
     document.getElementById("fullNeckIcon").textContent = "🎸";
     document.getElementById("fullNeckText").textContent = "Full Neck Scale";
 
@@ -175,6 +183,8 @@ class MultiInstrumentApp {
     // Reset to pattern view when changing scales
     if (this.isShowingFullNeck) {
       this.isShowingFullNeck = false;
+      document.getElementById("byPositionBtn").classList.add("active");
+      document.getElementById("playFullNeckBtn").classList.remove("active");
       document.getElementById("fullNeckIcon").textContent = "🎸";
       document.getElementById("fullNeckText").textContent = "Full Neck Scale";
     }
@@ -202,7 +212,15 @@ class MultiInstrumentApp {
   toggleFullNeckView() {
     this.isShowingFullNeck = !this.isShowingFullNeck;
 
+    // Update button states
+    const byPositionBtn = document.getElementById("byPositionBtn");
+    const fullNeckBtn = document.getElementById("playFullNeckBtn");
+
     if (this.isShowingFullNeck) {
+      // Full neck mode active
+      byPositionBtn.classList.remove("active");
+      fullNeckBtn.classList.add("active");
+
       this.fretboardRenderer.generateFullNeckFretboard(
         this.currentInstrument,
         this.selectedKey,
@@ -212,6 +230,10 @@ class MultiInstrumentApp {
       document.getElementById("fullNeckIcon").textContent = "🎵";
       document.getElementById("fullNeckText").textContent = "Show Patterns";
     } else {
+      // Position mode active
+      byPositionBtn.classList.add("active");
+      fullNeckBtn.classList.remove("active");
+
       this.fretboardRenderer.generateFretboard(
         this.currentInstrument,
         this.selectedKey,

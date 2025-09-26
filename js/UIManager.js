@@ -14,11 +14,14 @@ class UIManager {
 
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
-    document.body.setAttribute("data-theme", this.isDarkMode ? "dark" : "light");
-    
+    document.body.setAttribute(
+      "data-theme",
+      this.isDarkMode ? "dark" : "light"
+    );
+
     const themeIcon = document.getElementById("themeIcon");
     const themeText = document.getElementById("themeText");
-    
+
     if (this.isDarkMode) {
       themeIcon.textContent = "☀️";
       themeText.textContent = "Light";
@@ -112,11 +115,17 @@ class UIManager {
     });
   }
 
-  updatePatternOptions(currentInstrument, selectedScale, selectedPattern, onPatternChange) {
+  updatePatternOptions(
+    currentInstrument,
+    selectedScale,
+    selectedPattern,
+    onPatternChange
+  ) {
     const patternSelect = document.getElementById("patternSelect");
     const instrument = this.instrumentData.getInstrument(currentInstrument);
-    const patterns = instrument.scalePatterns[selectedScale] || instrument.scalePatterns.major;
-    
+    const patterns =
+      instrument.scalePatterns[selectedScale] || instrument.scalePatterns.major;
+
     patternSelect.innerHTML = "";
     patterns.forEach((pattern, index) => {
       const option = document.createElement("option");
@@ -124,27 +133,32 @@ class UIManager {
       option.textContent = pattern.name;
       patternSelect.appendChild(option);
     });
-    
-    const validPattern = selectedPattern < patterns.length ? selectedPattern : 0;
+
+    const validPattern =
+      selectedPattern < patterns.length ? selectedPattern : 0;
     patternSelect.value = validPattern;
-    
+
     // Set up event listener if not already set
-    if (!patternSelect.hasAttribute('data-listener-set')) {
+    if (!patternSelect.hasAttribute("data-listener-set")) {
       patternSelect.addEventListener("change", (e) => {
         onPatternChange(parseInt(e.target.value));
       });
-      patternSelect.setAttribute('data-listener-set', 'true');
+      patternSelect.setAttribute("data-listener-set", "true");
     }
-    
+
     return validPattern;
   }
 
   updateInfo(selectedKey, selectedScale) {
     const scaleNotes = this.getScaleNotes(selectedKey, selectedScale);
-    const scaleName = selectedScale.charAt(0).toUpperCase() + selectedScale.slice(1);
-    
-    document.getElementById("infoTitle").textContent = `${selectedKey} ${scaleName} Scale`;
-    document.getElementById("infoText").textContent = this.instrumentData.getScaleInfo(selectedScale);
+    const scaleName =
+      selectedScale.charAt(0).toUpperCase() + selectedScale.slice(1);
+
+    document.getElementById(
+      "infoTitle"
+    ).textContent = `${selectedKey} ${scaleName} Scale`;
+    document.getElementById("infoText").textContent =
+      this.instrumentData.getScaleInfo(selectedScale);
     document.getElementById("scaleNotes").textContent = scaleNotes.join(" - ");
     document.getElementById("legendRoot").textContent = selectedKey;
   }
@@ -152,14 +166,16 @@ class UIManager {
   getScaleNotes(selectedKey, selectedScale) {
     const rootIndex = this.instrumentData.noteNames.indexOf(selectedKey);
     const intervals = this.instrumentData.getScaleIntervals(selectedScale);
-    return intervals.map((interval) => this.instrumentData.noteNames[(rootIndex + interval) % 12]);
+    return intervals.map(
+      (interval) => this.instrumentData.noteNames[(rootIndex + interval) % 12]
+    );
   }
 
   toggleInfo() {
     const infoPanel = document.getElementById("infoPanel");
     const infoIcon = document.getElementById("infoIcon");
     const isHidden = infoPanel.classList.contains("hidden");
-    
+
     if (isHidden) {
       infoPanel.classList.remove("hidden");
       infoIcon.textContent = "▲";
@@ -182,27 +198,35 @@ class UIManager {
     if (isInitialized) {
       statusDiv.textContent = "🔊 Audio ready! Click notes to hear them play.";
       statusDiv.className = "audio-status success";
-      initBtn.textContent = "🔊 Audio Ready";
+      initBtn.textContent = "Audio Ready";
       initBtn.disabled = true;
     } else {
-      statusDiv.textContent = "Click 'Initialize Audio' to enable sound playback";
+      statusDiv.textContent = "Click 'Activate Audio' to enable sound playback";
       statusDiv.className = "audio-status";
       initBtn.disabled = false;
     }
   }
 
   setupVolumeControls(onVolumeChange, onDurationChange) {
-    document.getElementById("masterVolumeSlider").addEventListener("input", (e) => {
-      const volume = parseInt(e.target.value) / 100;
-      onVolumeChange(volume);
-      document.getElementById("masterVolumeValue").textContent = `${e.target.value}%`;
-    });
+    document
+      .getElementById("masterVolumeSlider")
+      .addEventListener("input", (e) => {
+        const volume = parseInt(e.target.value) / 100;
+        onVolumeChange(volume);
+        document.getElementById(
+          "masterVolumeValue"
+        ).textContent = `${e.target.value}%`;
+      });
 
-    document.getElementById("noteDurationSlider").addEventListener("input", (e) => {
-      const duration = parseInt(e.target.value) / 1000;
-      onDurationChange(duration);
-      document.getElementById("noteDurationValue").textContent = `${duration.toFixed(1)}s`;
-    });
+    document
+      .getElementById("noteDurationSlider")
+      .addEventListener("input", (e) => {
+        const duration = parseInt(e.target.value) / 1000;
+        onDurationChange(duration);
+        document.getElementById(
+          "noteDurationValue"
+        ).textContent = `${duration.toFixed(1)}s`;
+      });
   }
 
   setupTempoSlider(onTempoChange) {

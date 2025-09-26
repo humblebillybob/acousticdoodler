@@ -79,17 +79,26 @@
       <!-- Row 3: Action Buttons + Control Selects + Tempo -->
       <div class="row-three">
         <div class="action-buttons">
-          <button class="position-button active">By Position</button>
+          <button id="byPositionBtn" class="position-button active">
+            By Position
+          </button>
           <button id="playFullNeckBtn" class="full-neck-button">
             Full Neck
-          </button>
-          <button id="playButton" class="play-button" disabled>
-            <span id="playIcon">PLAY</span>
-            <span class="play-arrow">►</span>
           </button>
         </div>
 
         <div class="control-selects">
+          <button id="playButton" class="play-button" disabled>
+            <svg class="play-icon" id="playIconSvg" viewBox="0 0 24 24">
+              <polygon points="5,3 19,12 5,21"></polygon>
+            </svg>
+            <svg class="play-icon hidden" id="pauseIconSvg" viewBox="0 0 24 24">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            <span id="playIcon">PLAY</span>
+            <span class="play-arrow">►</span>
+          </button>
           <select id="scaleSelect" class="control-select">
             <option value="major">Scale Type</option>
             <option value="major">Major</option>
