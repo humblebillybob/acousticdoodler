@@ -1,4 +1,4 @@
-// Handles fretboard generation and rendering
+// Updated FretboardRenderer.js for the new architecture
 class FretboardRenderer {
   constructor(instrumentData, audioSynth) {
     this.instrumentData = instrumentData;
@@ -32,7 +32,8 @@ class FretboardRenderer {
 
   getPatternFrets(instrumentName, selectedScale, selectedPattern) {
     const instrument = this.instrumentData.getInstrument(instrumentName);
-    const patterns = instrument.scalePatterns[selectedScale] || instrument.scalePatterns.major;
+    const patterns =
+      instrument.scalePatterns[selectedScale] || instrument.scalePatterns.major;
     return patterns[selectedPattern] || patterns[0];
   }
 
@@ -42,20 +43,21 @@ class FretboardRenderer {
     const stringCount = instrument.tuning.length;
 
     // Create pattern based on instrument string count
-    const positions = instrumentName === "guitar" 
-      ? [
-          { start: 0, end: 3, strings: [0, 1, 2] },
-          { start: 2, end: 5, strings: [1, 2, 3] },
-          { start: 4, end: 7, strings: [2, 3, 4] },
-          { start: 7, end: 10, strings: [3, 4, 5] },
-          { start: 9, end: 12, strings: [4, 5] },
-        ]
-      : [
-          { start: 0, end: 4, strings: [0, 1] },
-          { start: 3, end: 7, strings: [1, 2] },
-          { start: 6, end: 10, strings: [2, 3] },
-          { start: 9, end: 12, strings: [2, 3] },
-        ];
+    const positions =
+      instrumentName === "guitar"
+        ? [
+            { start: 0, end: 3, strings: [0, 1, 2] },
+            { start: 2, end: 5, strings: [1, 2, 3] },
+            { start: 4, end: 7, strings: [2, 3, 4] },
+            { start: 7, end: 10, strings: [3, 4, 5] },
+            { start: 9, end: 12, strings: [4, 5] },
+          ]
+        : [
+            { start: 0, end: 4, strings: [0, 1] },
+            { start: 3, end: 7, strings: [1, 2] },
+            { start: 6, end: 10, strings: [2, 3] },
+            { start: 9, end: 12, strings: [2, 3] },
+          ];
 
     positions.forEach((pos, posIndex) => {
       const positionNotes = [];
@@ -65,7 +67,11 @@ class FretboardRenderer {
           for (let fret = pos.start; fret <= pos.end; fret++) {
             const note = this.getNoteAtFret(string, fret, instrument.tuning);
             if (this.isInScale(note, selectedKey, selectedScale)) {
-              const frequency = this.getFreqForFret(string, fret, instrument.openStringFreqs);
+              const frequency = this.getFreqForFret(
+                string,
+                fret,
+                instrument.openStringFreqs
+              );
               positionNotes.push({
                 note,
                 string,
@@ -90,150 +96,308 @@ class FretboardRenderer {
     return pattern;
   }
 
-  generateFretboard(instrumentName, selectedKey, selectedScale, selectedPattern, noteDuration) {
+  // Calculate note position based on string and fret
+  calculateNotePosition(stringIndex, fretIndex, isMobile = false) {
+    const stringCenters = [30, 90, 150, 210, 270, 330]; // Y positions for each string
+    const baseOffset = isMobile ? (window.innerWidth <= 480 ? 50 : 60) : 80; // Adjust for mobile vs desktop
+
+    // X positions for each fret (middle of fret spaces)
+    const fretPositions = [
+      40, // Fret 0 (nut position)
+      `calc(${baseOffset}px + 4.167%)`, // Fret 1
+      `calc(${baseOffset}px + 12.5%)`, // Fret 2
+      `calc(${baseOffset}px + 20.833%)`, // Fret 3
+      `calc(${baseOffset}px + 29.167%)`, // Fret 4
+      `calc(${baseOffset}px + 37.5%)`, // Fret 5
+      `calc(${baseOffset}px + 45.833%)`, // Fret 6
+      `calc(${baseOffset}px + 54.167%)`, // Fret 7
+      `calc(${baseOffset}px + 62.5%)`, // Fret 8
+      `calc(${baseOffset}px + 70.833%)`, // Fret 9
+      `calc(${baseOffset}px + 79.167%)`, // Fret 10
+      `calc(${baseOffset}px + 87.5%)`, // Fret 11
+      `calc(${baseOffset}px + 95.833%)`, // Fret 12
+    ];
+
+    return {
+      x:
+        fretIndex === 0
+          ? isMobile
+            ? window.innerWidth <= 480
+              ? "25px"
+              : "30px"
+            : "40px"
+          : fretPositions[fretIndex],
+      y: stringCenters[stringIndex] + "px",
+    };
+  }
+
+  // Create the fretboard structure
+  createFretboardStructure(instrumentName) {
     const instrument = this.instrumentData.getInstrument(instrumentName);
     const stringsContainer = document.getElementById("strings");
-    stringsContainer.innerHTML = "";
-    const patternFrets = this.getPatternFrets(instrumentName, selectedScale, selectedPattern);
 
+    // Clear existing content
+    stringsContainer.innerHTML = "";
+
+    // Create main fretboard container
+    const fretboardContainer = document.createElement("div");
+    fretboardContainer.className = "fretboard-container";
+
+    // Create grid structure
+    const fretboardGrid = document.createElement("div");
+    fretboardGrid.className = "fretboard-grid";
+
+    // Create string names section
+    const stringNames = document.createElement("div");
+    stringNames.className = "string-names";
+
+    // Add string names (reversed to match visual order)
     instrument.tuning
       .slice()
       .reverse()
-      .forEach((openNote, reverseIndex) => {
-        const stringIndex = instrument.tuning.length - 1 - reverseIndex;
-        const stringDiv = document.createElement("div");
-        stringDiv.className = "string";
+      .forEach((noteName) => {
         const stringName = document.createElement("div");
         stringName.className = "string-name";
-        stringName.textContent = openNote;
-        stringDiv.appendChild(stringName);
+        stringName.textContent = noteName;
+        stringNames.appendChild(stringName);
+      });
 
-        for (let fret = 0; fret <= 12; fret++) {
-          const fretSpace = document.createElement("div");
-          fretSpace.className = "fret-space";
-          fretSpace.dataset.string = stringIndex;
-          fretSpace.dataset.fret = fret;
+    fretboardGrid.appendChild(stringNames);
+    fretboardContainer.appendChild(fretboardGrid);
 
-          fretSpace.addEventListener("click", () => {
+    // Add fret wires
+    for (let i = 0; i < 12; i++) {
+      const fretWire = document.createElement("div");
+      fretWire.className = "fret-wire";
+      fretboardContainer.appendChild(fretWire);
+    }
+
+    // Add string lines
+    for (let i = 0; i < instrument.tuning.length; i++) {
+      const stringLine = document.createElement("div");
+      stringLine.className = "string-line";
+      fretboardContainer.appendChild(stringLine);
+    }
+
+    // Add fret markers
+    [3, 5, 7, 9, 12].forEach((fretNum) => {
+      const marker = document.createElement("div");
+      marker.className = `fret-marker fret-${fretNum}`;
+      fretboardContainer.appendChild(marker);
+    });
+
+    // Create notes layer
+    const notesLayer = document.createElement("div");
+    notesLayer.className = "notes-layer";
+    notesLayer.id = "notesLayer";
+    fretboardContainer.appendChild(notesLayer);
+
+    stringsContainer.appendChild(fretboardContainer);
+
+    // The fret numbers are already in the HTML, no need to create them again!
+  }
+
+  // Generate notes for pattern view
+  generateFretboard(
+    instrumentName,
+    selectedKey,
+    selectedScale,
+    selectedPattern,
+    noteDuration
+  ) {
+    this.createFretboardStructure(instrumentName);
+
+    const instrument = this.instrumentData.getInstrument(instrumentName);
+    const patternFrets = this.getPatternFrets(
+      instrumentName,
+      selectedScale,
+      selectedPattern
+    );
+    const notesLayer = document.getElementById("notesLayer");
+    const isMobile = window.innerWidth <= 768;
+
+    // Clear existing notes
+    notesLayer.innerHTML = "";
+
+    // Generate notes for each string
+    instrument.tuning.forEach((openNote, stringIndex) => {
+      const visualStringIndex = instrument.tuning.length - 1 - stringIndex; // Reverse for visual order
+
+      for (let fret = 0; fret <= 12; fret++) {
+        const note = this.getNoteAtFret(stringIndex, fret, instrument.tuning);
+        const inScale = this.isInScale(note, selectedKey, selectedScale);
+        const inPattern =
+          fret >= patternFrets.frets[stringIndex][0] &&
+          fret <= patternFrets.frets[stringIndex][1];
+        const isRoot = note === selectedKey;
+        const isOpen = fret === 0;
+
+        // Only create note element if it should be visible
+        if ((inPattern && inScale) || (isOpen && inScale) || inScale) {
+          const noteElement = document.createElement("div");
+          noteElement.className = "note-element";
+          noteElement.dataset.string = stringIndex;
+          noteElement.dataset.fret = fret;
+          noteElement.textContent = note;
+
+          // Apply appropriate styling class
+          if (inPattern && inScale) {
+            if (isRoot) {
+              noteElement.classList.add("note-root");
+            } else if (isOpen) {
+              noteElement.classList.add("note-open");
+            } else {
+              noteElement.classList.add("note-pattern");
+            }
+          } else if (isOpen && inScale) {
+            noteElement.classList.add("note-open");
+          } else if (inScale) {
+            noteElement.classList.add("note-scale");
+          }
+
+          // Add fret class for special positioning
+          if (fret === 0) {
+            noteElement.classList.add("fret-0");
+          }
+
+          // Position the note
+          const position = this.calculateNotePosition(
+            visualStringIndex,
+            fret,
+            isMobile
+          );
+          noteElement.style.left = position.x;
+          noteElement.style.top = position.y;
+
+          // Add click handler
+          noteElement.addEventListener("click", () => {
             if (this.audioSynth.isInitialized) {
-              const frequency = this.getFreqForFret(stringIndex, fret, instrument.openStringFreqs);
+              const frequency = this.getFreqForFret(
+                stringIndex,
+                fret,
+                instrument.openStringFreqs
+              );
               this.audioSynth.playNote(frequency, noteDuration);
 
-              fretSpace.style.transform = "scale(1.2)";
+              // Visual feedback
+              noteElement.style.transform = "translate(-50%, -50%) scale(1.2)";
               setTimeout(() => {
-                fretSpace.style.transform = "";
+                noteElement.style.transform = "translate(-50%, -50%)";
               }, 200);
             }
           });
 
-          if ([3, 5, 7, 9, 12].includes(fret)) {
-            fretSpace.classList.add("has-marker");
-          }
-
-          const note = this.getNoteAtFret(stringIndex, fret, instrument.tuning);
-          const inScale = this.isInScale(note, selectedKey, selectedScale);
-          const inPattern =
-            fret >= patternFrets.frets[stringIndex][0] &&
-            fret <= patternFrets.frets[stringIndex][1];
-          const isRoot = note === selectedKey;
-          const isOpen = fret === 0;
-
-          if (inPattern && inScale) {
-            fretSpace.textContent = note;
-            if (isRoot) {
-              fretSpace.classList.add("note-root");
-            } else if (isOpen) {
-              fretSpace.classList.add("note-open");
-            } else {
-              fretSpace.classList.add("note-pattern");
-            }
-          } else if (isOpen && inScale) {
-            fretSpace.textContent = note;
-            fretSpace.classList.add("note-open");
-          } else if (inScale) {
-            fretSpace.textContent = note;
-            fretSpace.classList.add("note-scale");
-          }
-          stringDiv.appendChild(fretSpace);
+          notesLayer.appendChild(noteElement);
         }
-        stringsContainer.appendChild(stringDiv);
-      });
+      }
+    });
 
-    document.getElementById("fretboardTitle").textContent = `Fretboard - ${patternFrets.name}`;
+    document.getElementById(
+      "fretboardTitle"
+    ).textContent = `Fretboard - ${patternFrets.name}`;
   }
 
-  generateFullNeckFretboard(instrumentName, selectedKey, selectedScale, noteDuration) {
-    const instrument = this.instrumentData.getInstrument(instrumentName);
-    const stringsContainer = document.getElementById("strings");
-    stringsContainer.innerHTML = "";
-    const fullNeckPattern = this.getFullNeckPattern(instrumentName, selectedKey, selectedScale);
+  // Generate notes for full neck view
+  generateFullNeckFretboard(
+    instrumentName,
+    selectedKey,
+    selectedScale,
+    noteDuration
+  ) {
+    this.createFretboardStructure(instrumentName);
 
+    const instrument = this.instrumentData.getInstrument(instrumentName);
+    const fullNeckPattern = this.getFullNeckPattern(
+      instrumentName,
+      selectedKey,
+      selectedScale
+    );
+    const notesLayer = document.getElementById("notesLayer");
+    const isMobile = window.innerWidth <= 768;
+
+    // Clear existing notes
+    notesLayer.innerHTML = "";
+
+    // Create set of pattern positions for quick lookup
     const patternPositions = new Set();
     fullNeckPattern.forEach((note) => {
       patternPositions.add(`${note.string}-${note.fret}`);
     });
 
-    instrument.tuning
-      .slice()
-      .reverse()
-      .forEach((openNote, reverseIndex) => {
-        const stringIndex = instrument.tuning.length - 1 - reverseIndex;
-        const stringDiv = document.createElement("div");
-        stringDiv.className = "string";
-        const stringName = document.createElement("div");
-        stringName.className = "string-name";
-        stringName.textContent = openNote;
-        stringDiv.appendChild(stringName);
+    // Generate notes for each string
+    instrument.tuning.forEach((openNote, stringIndex) => {
+      const visualStringIndex = instrument.tuning.length - 1 - stringIndex; // Reverse for visual order
 
-        for (let fret = 0; fret <= 12; fret++) {
-          const fretSpace = document.createElement("div");
-          fretSpace.className = "fret-space";
-          fretSpace.dataset.string = stringIndex;
-          fretSpace.dataset.fret = fret;
+      for (let fret = 0; fret <= 12; fret++) {
+        const note = this.getNoteAtFret(stringIndex, fret, instrument.tuning);
+        const inScale = this.isInScale(note, selectedKey, selectedScale);
+        const inFullNeckPattern = patternPositions.has(
+          `${stringIndex}-${fret}`
+        );
+        const isRoot = note === selectedKey;
+        const isOpen = fret === 0;
 
-          fretSpace.addEventListener("click", () => {
+        // Create note element if it should be visible
+        if (inFullNeckPattern || (isOpen && inScale) || inScale) {
+          const noteElement = document.createElement("div");
+          noteElement.className = "note-element";
+          noteElement.dataset.string = stringIndex;
+          noteElement.dataset.fret = fret;
+          noteElement.textContent = note;
+
+          // Apply appropriate styling class
+          if (inFullNeckPattern) {
+            if (isRoot) {
+              noteElement.classList.add("note-root");
+            } else if (isOpen) {
+              noteElement.classList.add("note-open");
+            } else {
+              noteElement.classList.add("note-pattern");
+            }
+          } else if (isOpen && inScale) {
+            noteElement.classList.add("note-scale");
+          } else if (inScale) {
+            noteElement.classList.add("note-scale");
+          }
+
+          // Add fret class for special positioning
+          if (fret === 0) {
+            noteElement.classList.add("fret-0");
+          }
+
+          // Position the note
+          const position = this.calculateNotePosition(
+            visualStringIndex,
+            fret,
+            isMobile
+          );
+          noteElement.style.left = position.x;
+          noteElement.style.top = position.y;
+
+          // Add click handler
+          noteElement.addEventListener("click", () => {
             if (this.audioSynth.isInitialized) {
-              const frequency = this.getFreqForFret(stringIndex, fret, instrument.openStringFreqs);
+              const frequency = this.getFreqForFret(
+                stringIndex,
+                fret,
+                instrument.openStringFreqs
+              );
               this.audioSynth.playNote(frequency, noteDuration);
 
-              fretSpace.style.transform = "scale(1.2)";
+              // Visual feedback
+              noteElement.style.transform = "translate(-50%, -50%) scale(1.2)";
               setTimeout(() => {
-                fretSpace.style.transform = "";
+                noteElement.style.transform = "translate(-50%, -50%)";
               }, 200);
             }
           });
 
-          if ([3, 5, 7, 9, 12].includes(fret)) {
-            fretSpace.classList.add("has-marker");
-          }
-
-          const note = this.getNoteAtFret(stringIndex, fret, instrument.tuning);
-          const inScale = this.isInScale(note, selectedKey, selectedScale);
-          const inFullNeckPattern = patternPositions.has(`${stringIndex}-${fret}`);
-          const isRoot = note === selectedKey;
-          const isOpen = fret === 0;
-
-          if (inFullNeckPattern) {
-            fretSpace.textContent = note;
-            if (isRoot) {
-              fretSpace.classList.add("note-root");
-            } else if (isOpen) {
-              fretSpace.classList.add("note-open");
-            } else {
-              fretSpace.classList.add("note-pattern");
-            }
-          } else if (isOpen && inScale) {
-            fretSpace.textContent = note;
-            fretSpace.classList.add("note-scale");
-          } else if (inScale) {
-            fretSpace.textContent = note;
-            fretSpace.classList.add("note-scale");
-          }
-          stringDiv.appendChild(fretSpace);
+          notesLayer.appendChild(noteElement);
         }
-        stringsContainer.appendChild(stringDiv);
-      });
+      }
+    });
 
-    document.getElementById("fretboardTitle").textContent = "Full Neck Scale Pattern";
+    document.getElementById("fretboardTitle").textContent =
+      "Full Neck Scale Pattern";
   }
 }

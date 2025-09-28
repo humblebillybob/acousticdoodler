@@ -37,6 +37,12 @@ class MultiInstrumentApp {
     this.setupEventListeners();
     this.switchInstrument("guitar");
     this.uiManager.updateAudioStatus(this.audioSynth.isInitialized);
+
+    // Add window resize handler for responsive fretboard
+    window.addEventListener("resize", () => {
+      // Regenerate fretboard on resize to adjust note positions
+      this.generateCurrentFretboard();
+    });
   }
 
   setupEventListeners() {
@@ -152,12 +158,28 @@ class MultiInstrumentApp {
     this.uiManager.updateInstrumentNavigation(instrument);
     this.uiManager.updateInstrumentTitle(instrument);
 
+    // Add instrument class to fretboard container for CSS adjustments
+    const stringsContainer = document.getElementById("strings");
+    if (stringsContainer) {
+      // Remove existing instrument classes
+      stringsContainer.className = stringsContainer.className.replace(
+        /\b(guitar|ukulele|mandolin)\b/g,
+        ""
+      );
+      // Add current instrument class
+      stringsContainer.classList.add(instrument);
+    }
+
     // Reset to pattern view
     this.isShowingFullNeck = false;
     document.getElementById("byPositionBtn").classList.add("active");
     document.getElementById("playFullNeckBtn").classList.remove("active");
-    document.getElementById("fullNeckIcon").textContent = "🎸";
-    document.getElementById("fullNeckText").textContent = "Full Neck Scale";
+
+    // Update hidden elements for compatibility
+    const fullNeckIcon = document.getElementById("fullNeckIcon");
+    const fullNeckText = document.getElementById("fullNeckText");
+    if (fullNeckIcon) fullNeckIcon.textContent = "🎸";
+    if (fullNeckText) fullNeckText.textContent = "Full Neck Scale";
 
     // Update components
     this.updatePatternOptions();
@@ -185,12 +207,24 @@ class MultiInstrumentApp {
       this.isShowingFullNeck = false;
       document.getElementById("byPositionBtn").classList.add("active");
       document.getElementById("playFullNeckBtn").classList.remove("active");
-      document.getElementById("fullNeckIcon").textContent = "🎸";
-      document.getElementById("fullNeckText").textContent = "Full Neck Scale";
+
+      const fullNeckIcon = document.getElementById("fullNeckIcon");
+      const fullNeckText = document.getElementById("fullNeckText");
+      if (fullNeckIcon) fullNeckIcon.textContent = "🎸";
+      if (fullNeckText) fullNeckText.textContent = "Full Neck Scale";
     }
   }
 
   generateCurrentFretboard() {
+    // Add instrument class to container for styling
+    const stringsContainer = document.getElementById("strings");
+    if (stringsContainer) {
+      // Remove existing instrument classes
+      stringsContainer.classList.remove("guitar", "ukulele", "mandolin");
+      // Add current instrument class
+      stringsContainer.classList.add(this.currentInstrument);
+    }
+
     if (this.isShowingFullNeck) {
       this.fretboardRenderer.generateFullNeckFretboard(
         this.currentInstrument,
@@ -206,6 +240,20 @@ class MultiInstrumentApp {
         this.selectedPattern,
         this.noteDuration
       );
+    }
+
+    // Apply instrument class to fretboard container for responsive styling
+    const fretboardContainer = document.querySelector(".fretboard-container");
+    if (fretboardContainer) {
+      fretboardContainer.classList.remove("guitar", "ukulele", "mandolin");
+      fretboardContainer.classList.add(this.currentInstrument);
+    }
+
+    // Apply instrument class to fretboard grid
+    const fretboardGrid = document.querySelector(".fretboard-grid");
+    if (fretboardGrid) {
+      fretboardGrid.classList.remove("guitar", "ukulele", "mandolin");
+      fretboardGrid.classList.add(this.currentInstrument);
     }
   }
 
@@ -227,8 +275,12 @@ class MultiInstrumentApp {
         this.selectedScale,
         this.noteDuration
       );
-      document.getElementById("fullNeckIcon").textContent = "🎵";
-      document.getElementById("fullNeckText").textContent = "Show Patterns";
+
+      // Update hidden elements for compatibility
+      const fullNeckIcon = document.getElementById("fullNeckIcon");
+      const fullNeckText = document.getElementById("fullNeckText");
+      if (fullNeckIcon) fullNeckIcon.textContent = "🎵";
+      if (fullNeckText) fullNeckText.textContent = "Show Patterns";
     } else {
       // Position mode active
       byPositionBtn.classList.add("active");
@@ -241,9 +293,16 @@ class MultiInstrumentApp {
         this.selectedPattern,
         this.noteDuration
       );
-      document.getElementById("fullNeckIcon").textContent = "🎸";
-      document.getElementById("fullNeckText").textContent = "Full Neck Scale";
+
+      // Update hidden elements for compatibility
+      const fullNeckIcon = document.getElementById("fullNeckIcon");
+      const fullNeckText = document.getElementById("fullNeckText");
+      if (fullNeckIcon) fullNeckIcon.textContent = "🎸";
+      if (fullNeckText) fullNeckText.textContent = "Full Neck Scale";
     }
+
+    // Ensure proper styling is applied
+    this.generateCurrentFretboard();
   }
 
   updateAudioRelatedButtons() {
